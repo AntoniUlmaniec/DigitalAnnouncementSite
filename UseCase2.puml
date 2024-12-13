@@ -1,0 +1,60 @@
+@startuml
+actor User as U
+actor Admin as A
+participant "System" as S
+participant "Announcement" as Ann
+participant "Category" as C
+participant "Statistics" as St
+participant "Database" as DB
+
+== Publikowanie ogłoszenia ==
+U -> S: publishAnnouncement(announcement)
+S -> Ann: create(announcement)
+Ann -> DB: save(announcement)
+DB --> Ann: success
+Ann --> S: success
+S --> U: confirmation
+
+== Przeglądanie kategorii i ogłoszeń ==
+U -> S: browseCategories()
+S -> DB: fetchCategories()
+DB --> S: categoriesList
+S -> U: displayCategories()
+
+U -> S: browseAnnouncements(category)
+S -> DB: fetchAnnouncements(category)
+DB --> S: announcementsList
+S -> U: displayAnnouncements()
+
+== Dodanie ogłoszenia do wishlist ==
+U -> S: addToWishList(announcement)
+S -> DB: fetchUserWishlist(userId)
+DB --> S: wishlist
+S -> DB: addToWishlist(userId, announcementId)
+DB --> S: success
+S --> U: confirmation
+
+== Usunięcie ogłoszenia przez administratora ==
+A -> S: deleteAnnouncement(announcement)
+S -> DB: findAnnouncementById(announcementId)
+DB --> S: announcement
+S -> DB: delete(announcement)
+DB --> S: success
+S --> A: confirmation
+
+== Banowanie użytkownika ==
+A -> S: banUser(userId)
+S -> DB: findUserById(userId)
+DB --> S: userDetails
+S -> DB: updateUserStatus(userId, "banned")
+DB --> S: success
+S --> A: confirmation
+
+== Przeglądanie statystyk systemowych ==
+A -> S: viewGeneralStatistics()
+S -> DB: fetchStatistics()
+DB --> S: statisticsData
+S -> St: process(statisticsData)
+St --> S: preparedStatistics
+S --> A: displayStatistics()
+@enduml

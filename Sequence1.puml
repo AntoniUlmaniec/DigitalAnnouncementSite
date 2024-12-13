@@ -1,0 +1,41 @@
+@startuml
+class User {
+    - numberOfAnnouncements : int
+    - wishList : List<Announcement>
+    + publishAnnouncement(announcement : Announcement) : void
+    + browseCategories() : List<Category>
+    + addToWishList(announcement : Announcement) : void
+    + commentOnAnnouncement(announcement : Announcement, comment : String) : void
+}
+
+class Admin {
+    + deleteAnnouncement(announcement : Announcement) : void
+    + editAnyAnnouncement(announcement : Announcement) : void
+    + addCategory(category : Category) : void
+    + removeCategory(category : Category) : void
+    + banUser(user : User) : void
+    + viewGeneralStatistics() : Statistics
+}
+
+Admin --|> User
+
+class Announcement {
+    - id : int
+    - title : String
+    - content : String
+    - owner : User
+}
+
+class Category {
+    - id : int
+    - name : String
+    - description : String
+}
+
+class Statistics {
+    - totalUsers : int
+    - totalAnnouncements : int
+    - activeUsers : int
+}
+
+@enduml
