@@ -1,18 +1,20 @@
 @startuml
+
 class User {
     - numberOfAnnouncements : int
     - wishList : List<Announcement>
     + publishAnnouncement(announcement : Announcement) : void
+    + editAnnouncement(announcementId : int, updatedData : String) : void
+    + deleteAnnouncement(announcementId : int) : void
     + browseCategories() : List<Category>
+    + browseAnnouncements(categoryId : int) : List<Announcement>
     + addToWishList(announcement : Announcement) : void
     + commentOnAnnouncement(announcement : Announcement, comment : String) : void
 }
 
 class Admin {
-    + deleteAnnouncement(announcement : Announcement) : void
-    + editAnyAnnouncement(announcement : Announcement) : void
     + addCategory(category : Category) : void
-    + removeCategory(category : Category) : void
+    + removeCategory(categoryId : int) : void
     + banUser(user : User) : void
     + viewGeneralStatistics() : Statistics
 }
@@ -24,6 +26,7 @@ class Announcement {
     - title : String
     - content : String
     - owner : User
+    + addComment(user : User, comment : String) : void
 }
 
 class Category {
@@ -37,5 +40,15 @@ class Statistics {
     - totalAnnouncements : int
     - activeUsers : int
 }
+
+User --> Announcement : publishes
+User --> Announcement : comments on
+User --> Category : browses
+User --> Announcement : adds to wishlist
+User --> Announcement : edit/remove
+Admin --> Category : manages
+Admin --> User : bans
+Admin --> Announcement : manages
+Admin --> Statistics : browses
 
 @enduml

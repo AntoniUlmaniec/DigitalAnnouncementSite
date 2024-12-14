@@ -3,27 +3,28 @@ actor User
 actor Admin
 
 usecase "Publikowanie ogłoszenia" as UC1
-usecase "Przeglądanie kategorii i ogłoszeń" as UC2
-usecase "Dodanie ogłoszenia do wishlist" as UC3
-usecase "Komentowanie ogłoszenia" as UC4
+usecase "Usuwanie/Edytowanie własnego ogłoszenia" as UC2
+usecase "Przeglądanie kategorii i ogłoszeń" as UC3
+usecase "Dodanie ogłoszenia do wishlist" as UC4
+usecase "Komentowanie ogłoszenia" as UC5
 
-usecase "Usuwanie ogłoszeń" as UC5
-usecase "Edytowanie dowolnego ogłoszenia" as UC6
-usecase "Dodawanie kategorii" as UC7
-usecase "Usuwanie kategorii" as UC8
-usecase "Banowanie użytkowników" as UC9
-usecase "Przeglądanie statystyk systemowych" as UC10
+usecase "Usuwanie/Edytowanie dowolnego ogłoszenia" as UC6
+usecase "Dodawanie/Usuwanie kategorii" as UC7
+usecase "Banowanie użytkowników" as UC8
+usecase "Przeglądanie statystyk systemowych" as UC9
 
 User --> UC1
 User --> UC2
 User --> UC3
 User --> UC4
+User --> UC5
 
-Admin --> UC5
+Admin --> User
+
 Admin --> UC6
 Admin --> UC7
 Admin --> UC8
 Admin --> UC9
-Admin --> UC10
+
 
 @enduml

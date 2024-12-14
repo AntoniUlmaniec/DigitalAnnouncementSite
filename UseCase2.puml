@@ -15,34 +15,77 @@ DB --> Ann: success
 Ann --> S: success
 S --> U: confirmation
 
+== Usuwanie/Edytowanie własnego ogłoszenia ==
+U -> S: editAnnouncement(announcementId, updatedData)
+S -> DB: findAnnouncementByOwner(userId, announcementId)
+DB --> S: announcementDetails
+S -> DB: updateAnnouncement(announcementId, updatedData)
+DB --> S: success
+S --> U: confirmation
+
+U -> S: deleteAnnouncement(announcementId)
+S -> DB: findAnnouncementByOwner(userId, announcementId)
+DB --> S: announcementDetails
+S -> DB: deleteAnnouncement(announcementId)
+DB --> S: success
+S --> U: confirmation
+
 == Przeglądanie kategorii i ogłoszeń ==
 U -> S: browseCategories()
 S -> DB: fetchCategories()
 DB --> S: categoriesList
-S -> U: displayCategories()
+S --> U: displayCategories()
 
-U -> S: browseAnnouncements(category)
-S -> DB: fetchAnnouncements(category)
+U -> S: browseAnnouncements(categoryId)
+S -> DB: fetchAnnouncements(categoryId)
 DB --> S: announcementsList
-S -> U: displayAnnouncements()
+S --> U: displayAnnouncements()
 
 == Dodanie ogłoszenia do wishlist ==
-U -> S: addToWishList(announcement)
+U -> S: addToWishlist(announcementId)
 S -> DB: fetchUserWishlist(userId)
 DB --> S: wishlist
-S -> DB: addToWishlist(userId, announcementId)
+S -> DB: updateWishlist(userId, announcementId)
 DB --> S: success
 S --> U: confirmation
 
-== Usunięcie ogłoszenia przez administratora ==
-A -> S: deleteAnnouncement(announcement)
+== Komentowanie ogłoszenia ==
+U -> S: commentOnAnnouncement(announcementId, comment)
 S -> DB: findAnnouncementById(announcementId)
-DB --> S: announcement
-S -> DB: delete(announcement)
+DB --> S: announcementDetails
+S -> DB: addComment(announcementId, userId, comment)
+DB --> S: success
+S --> U: confirmation
+
+== Usuwanie/Edytowanie dowolnego ogłoszenia (Admin) ==
+A -> S: editAnnouncement(announcementId, updatedData)
+S -> DB: findAnnouncementById(announcementId)
+DB --> S: announcementDetails
+S -> DB: updateAnnouncement(announcementId, updatedData)
 DB --> S: success
 S --> A: confirmation
 
-== Banowanie użytkownika ==
+A -> S: deleteAnnouncement(announcementId)
+S -> DB: findAnnouncementById(announcementId)
+DB --> S: announcementDetails
+S -> DB: deleteAnnouncement(announcementId)
+DB --> S: success
+S --> A: confirmation
+
+== Dodawanie/Usuwanie kategorii ==
+A -> S: addCategory(categoryData)
+S -> C: create(categoryData)
+C -> DB: save(categoryData)
+DB --> C: success
+C --> S: success
+S --> A: confirmation
+
+A -> S: removeCategory(categoryId)
+S -> DB: deleteCategory(categoryId)
+DB --> S: success
+S --> A: confirmation
+
+== Banowanie użytkowników ==
 A -> S: banUser(userId)
 S -> DB: findUserById(userId)
 DB --> S: userDetails
