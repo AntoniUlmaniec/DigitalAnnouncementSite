@@ -41,6 +41,7 @@ class Statistics {
     - activeUsers : int
 }
 
+User --> Announcement : browses
 User --> Announcement : publishes
 User --> Announcement : comments on
 User --> Category : browses
