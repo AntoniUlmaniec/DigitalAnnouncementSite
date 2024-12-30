@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class User {
     private int numberOfAnnouncements;
-    private ArrayList<Announcement> wishList;
+    private List<Announcement> wishList;
 
     public User() {
         this.numberOfAnnouncements = 0;
@@ -54,12 +55,12 @@ public class User {
         return new Announcement();  // zwraca to ogloszenie
     }
 
-    public ArrayList<Category> browseCategories() {
+    public List<Category> browseCategories() {
         // do dokoczenia
         return new ArrayList<>();
     }
 
-    public ArrayList<Announcement> browseAnnouncements(int categoryId) {
+    public List<Announcement> browseAnnouncements(int categoryId) {
         // do dokonczenia
         return new ArrayList<>();
     }
