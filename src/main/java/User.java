@@ -6,7 +6,7 @@ public class User {
 
     public User() {
         this.numberOfAnnouncements = 0;
-        this.wishList = new ArrayList<>();
+        this.wishList = new ArrayList<Announcement>();
     }
 
     public void publishAnnouncement(Announcement announcement) {

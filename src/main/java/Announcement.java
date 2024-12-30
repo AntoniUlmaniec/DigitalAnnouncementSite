@@ -4,6 +4,16 @@ public class Announcement {
     private String content;
     private User owner;
 
+    public Announcement(int id, String title, String content, User owner){
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.owner = owner;
+    };
+
+    public Announcement(){
+    }
+
     public void addComment(User user, String comment) {
         // do dokoczenia
     }

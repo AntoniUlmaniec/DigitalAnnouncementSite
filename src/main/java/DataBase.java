@@ -30,4 +30,6 @@ public class DataBase {
     public List<Statistics> getStatistics() {
         return statistics;
     }
+
+    public HashMap<User, Announcement> getWishList() { return wishList; }
 }
