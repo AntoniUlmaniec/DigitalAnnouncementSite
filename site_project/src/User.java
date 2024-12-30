@@ -13,7 +13,6 @@ public class User {
     public void publishAnnouncement(Announcement announcement) {
 
         numberOfAnnouncements++;
-        announcement.setOwner(this);
 
         // do dokonczenia
     }
@@ -30,6 +29,7 @@ public class User {
     }
 
     public void deleteAnnouncement(int announcementId) {
+
         Announcement announcement = findAnnouncementById(announcementId);
 
         if (announcement.getOwner().equals(this)) {
@@ -41,7 +41,7 @@ public class User {
     }
 
     public void addToWishList(Announcement announcement) {
-        wishList.add(announcement);
+
         System.out.println("Announcement added to wishlist: " + announcement.getTitle());
     }
 
@@ -50,9 +50,9 @@ public class User {
     }
 
     private Announcement findAnnouncementById(int id) {
-        // tutaj przeszukuje baze danych
 
-        return new Announcement();  // zwraca to ogloszenie
+
+        return null;  // zwraca to ogloszenie
     }
 
     public List<Category> browseCategories() {
