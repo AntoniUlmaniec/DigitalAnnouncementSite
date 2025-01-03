@@ -3,8 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+
+    </style>
 </head>
 <body>
-<div>xddddd</div>
+    <div class="main">
+        <div id="select-user" class="select-user">Select User</div>
+        <div id="select-category" class="select-category">Select Category</div>
+        <div class="select-announcement"></div>
+        <div class="display-stats"></div>
+    </div>
+    <script defer>
+        let user = "";
+        const loadUsers = async () => {
+            let data = await fetchAsync({}, "/loadUsers");
+            const usersDiv = document.getElementById("select-user");
+            data.forEach(e=>{
+                let element = document.createElement("div");
+                element.classList.add("user-element");
+                element.innerHTML = e.username;
+                element.userId = e.id;
+                element.onclick = login;
+                usersDiv.appendChild(element);
+            })
+        }
+
+        const login = async (e) => {
+            let id = e.target.userId;
+            console.log(id);
+            let reqData = {
+                "id":id
+            }
+            let data = await fetchAsync(reqData,"/login");
+
+            if (data.state != "logged") return;
+            user = e.target.innerHTML;
+            console.log("zalogowano", user);
+            const usersDiv = document.getElementById("select-user");
+            usersDiv.style.visibility = "hidden";
+            await displayCategories();
+        }
+
+        const displayCategories = async () =>{
+            let reqData = {};
+            let data = await fetchAsync(reqData, "/browseCategories");
+            const categoriesDiv = document.getElementById("select-category");
+            categoriesDiv.style.visibility = "visible";
+            data.forEach(e=>{
+                let elem = document.createElement("div");
+                elem.innerHTML = e.name;
+                elem.onclick = displayAnnouncements;
+                categoriesDiv.appendChild(elem);
+            })
+        }
+
+        const displayAnnouncements = async (e) =>{
+            const categoryName = e.target.innerHTML;
+            let reqData = {"name":categoryName};
+            let data = await fetchAsync(reqData,"/browseAnnouncements");
+            console.log(data);
+        }
+
+        const fetchAsync = async (bodyObject, url) => {
+            const options = {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(bodyObject)
+            }
+            let response = await fetch(url, options);
+            if (!response.ok) return response.status
+            else return await response.json() // response.json
+        }
+        loadUsers();
+    </script>
 </body>
 </html>

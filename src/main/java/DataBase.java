@@ -13,6 +13,17 @@ public class DataBase {
         wishList = new HashMap<>();
         categories = new ArrayList<>();
         statistics = new ArrayList<>();
+
+        users.add(new User("tomek",1));
+
+        Category cat = new Category();
+        cat.setName("sport");
+        categories.add(cat);
+
+        Announcement announcement = new Announcement(1,"sprzedam opla","opel rocznik 2010, 100zł",users.get(0));
+        List<Announcement> sportAnnouncements = new ArrayList<>();
+        sportAnnouncements.add(announcement);
+        announcementsInCategories.put(cat,sportAnnouncements);
     }
 
     public HashMap<Category, List<Announcement>> getAnnouncementsInCategories() {

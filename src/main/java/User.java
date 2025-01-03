@@ -3,10 +3,14 @@ import java.util.List;
 public class User {
     private int numberOfAnnouncements;
     private List<Announcement> wishList;
+    private String username;
+    private int id;
 
-    public User() {
+    public User(String username, int id) {
         this.numberOfAnnouncements = 0;
         this.wishList = new ArrayList<Announcement>();
+        this.username = username;
+        this.id = id;
     }
 
     public void publishAnnouncement(Announcement announcement) {
@@ -61,5 +65,13 @@ public class User {
     public List<Announcement> browseAnnouncements(int categoryId) {
         // do dokonczenia
         return new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }
