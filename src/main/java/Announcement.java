@@ -6,13 +6,15 @@ public class Announcement {
     private String title;
     private String content;
     private User owner;
+    private Category category;
     private List<String> comments;
 
-    public Announcement(int id, String title, String content, User owner){
+    public Announcement(int id, String title, String content, User owner, Category category){
         this.id = id;
         this.title = title;
         this.content = content;
         this.owner = owner;
+        this.category = category;
         this.comments = new ArrayList<>();
     };
 
@@ -53,6 +55,14 @@ public class Announcement {
 
     public List<String> getComments() {
         return comments;
+    }
+
+    public void addComment(String comment) {
+        comments.add(comment);
+    }
+
+    public Category getCategory() {
+        return category;
     }
 }
 

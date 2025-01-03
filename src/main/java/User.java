@@ -63,17 +63,35 @@ public class User {
         return new ArrayList<>();
     }
 
-    public List<Announcement> browseAnnouncements(int categoryId) {
-        // do dokonczenia
-        return new ArrayList<>();
+    public void browseAnnouncements(int categoryId) {
+        List<Announcement> announcements = Controller.fetchAnnouncements(categoryId);
+        for (Announcement announcement : announcements) {
+            System.out.println(announcement);
+        }
+    }
+
+    public int getNumberOfAnnouncements() {
+        return numberOfAnnouncements;
+    }
+
+    public void setNumberOfAnnouncements(int numberOfAnnouncements) {
+        this.numberOfAnnouncements = numberOfAnnouncements;
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isBanStatus() {
@@ -81,5 +99,13 @@ public class User {
     }
     public void setBanStatus(boolean banStatus) {
         this.banStatus = banStatus;
+    }
+
+    public List<Announcement> getWishList() {
+        return wishList;
+    }
+
+    public void setWishList(List<Announcement> wishList) {
+        this.wishList = wishList;
     }
 }

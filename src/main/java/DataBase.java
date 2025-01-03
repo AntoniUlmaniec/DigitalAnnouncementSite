@@ -5,14 +5,14 @@ public class DataBase {
     private List<User> users;
     private HashMap<User, List<Announcement>> wishList;
     private List<Category> categories;
-    private List<Statistics> statistics;
+    private Statistics statistics;
 
     public DataBase() {
         announcementsInCategories = new HashMap<>();
         users = new ArrayList<>();
         wishList = new HashMap<>();
         categories = new ArrayList<>();
-        statistics = new ArrayList<>();
+        statistics = new Statistics();
 
         users.add(new User("tomek",1));
 
@@ -20,7 +20,7 @@ public class DataBase {
         cat.setName("sport");
         categories.add(cat);
 
-        Announcement announcement = new Announcement(1,"sprzedam opla","opel rocznik 2010, 100zł",users.get(0));
+        Announcement announcement = new Announcement(1,"sprzedam opla","opel rocznik 2010, 100zł",users.get(0), cat);
         List<Announcement> sportAnnouncements = new ArrayList<>();
         sportAnnouncements.add(announcement);
         announcementsInCategories.put(cat,sportAnnouncements);
@@ -47,7 +47,7 @@ public class DataBase {
         return categories;
     }
 
-    public List<Statistics> getStatistics() {
+    public Statistics getStatistics() {
         return statistics;
     }
 

@@ -3,9 +3,7 @@ import spark.Request;
 import spark.Response;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 class Id{
     public int id;
@@ -15,7 +13,7 @@ class ResponseStatus{
     String state;
 }
 
-public class System {
+public class Controller {
     static DataBase db = new DataBase();
 
     public static void main(String[] args) {
@@ -131,117 +129,136 @@ public class System {
 //
 //
 //    // obsługa bazy danych (system - baza danych)
-//    static Announcement createAnnouncement(Request req){
-//        Gson gson = new Gson();
-//        Announcement ann = gson.fromJson(req.body(), Announcement.class);
-//        return ann;
-//    }
-//
-//    static String saveAnnouncement(Announcement a){
-//        //do dogrania jak to robimy
-//        return "success";
-//    }
-//
-//    static Announcement findAnnouncementByOwner(int userId, int announcementId){
-//        // do dogrania jak to robimy
-//        return new Announcement();
-//    };
-//
-//    static Announcement deleteAnnouncement(int announcementId){
-//        // do dogrania jak to robimy
-//        return new Announcement();
-//    }
-//
-//    static List<Category> fetchCategories(){
-//        return db.getCategories();
-//    }
-//
-//    static List<Announcement> fetchAnnouncements(int categoryId){
-//        HashMap<Category, List<Announcement>> announcementsInCategories = db.getAnnouncementsInCategories();
-//        return announcementsInCategories.get(categoryId);
-//    }
-//
-//    static ArrayList<Announcement> fetchUserWishlist(int userId){
-//        return db.getWishList().get(userId); // typy różne, do przegadania
-//    }
-//
-//    static String updateWishlist(int userId, int announcementId){
-//        // do zastanowienia, przydałaby się lista z samymi announcementami?
-//        // db.getWishList().get(userId).add(db.getAnnouncements().get(announcementId));
-//        return "success";
-//    }
-//
-    static Announcement findAnnouncementById(int announcementId){
-        List<Announcement> announcements = db.getAnnouncements(); // tu podobnie co funkcja powyżej
-        for(int i = 0; i < announcements.size(); i++) {
-            Announcement a = announcements.get(i);
-            if (a.getId() == announcementId) return a;
+    static Announcement createAnnouncement(Request req){
+        Gson gson = new Gson();
+        Announcement ann = gson.fromJson(req.body(), Announcement.class);
+        saveAnnouncement(ann, ann.getCategory());
+        return ann;
+    }
+
+    static void saveAnnouncement(Announcement a, Category cat){
+        db.getAnnouncementsInCategories().get(cat).add(a);
+    }
+
+    static Announcement findAnnouncementByOwner(int userId, int announcementId){
+        List<Announcement> announcements = db.getAnnouncements();
+        for (Announcement a : announcements) {
+            if (a.getOwner().getId() == userId && a.getId() == announcementId) return a;
+        }
+        return null;
+    };
+
+    static Announcement deleteAnnouncement(int userId, int announcementId){
+        Announcement ann = findAnnouncementByOwner(userId, announcementId);
+        if (ann != null) {
+            db.getAnnouncementsInCategories().get(ann.getCategory()).remove(ann);
+            return ann;
         }
 
         return null;
     }
-//
-//    static String addComment(int announcementId, int userId, String comment){
-//        // do zastanowienia
-//        return "success";
-//    }
-//
-//    static String updateAnnouncement(int announcementId, Announcement updatedData){
-//        Announcement b = findAnnouncementById(announcementId);
-//        b.setOwner(updatedData.getOwner());
-//        b.setContent(updatedData.getContent());
-//        b.setTitle(updatedData.getTitle());
-//        return "success";
-//    }
-//
-//    static String deleteAnnouncement(int announcementId, String updatedData){
-//        // db.getAnnouncements().remove(db.getAnnouncements().get(announcementId)); jak wyżej
-//        return "success";
-//    }
-//
-//    static Category createCategory(Request req){
-//        Gson gson = new Gson();
-//        return gson.fromJson(req.body(), Category.class);
-//    }
-//
-//    static Category deleteCategory(int categoryId){
-//        return db.getCategories().remove(categoryId);
-//    }
-//
-//
+
+    static Category findCategoryById(int categoryId) {
+        List<Category> categories = db.getCategories();
+        for (Category cat : categories) {
+            if (cat.getId() == categoryId) return cat;
+        }
+
+        return null;
+    }
+    static List<Category> fetchCategories(){
+        return db.getCategories();
+    }
+
+    static List<Announcement> fetchAnnouncements(int categoryId){
+        List<Announcement> announcements = new ArrayList<>();
+
+        for (Map.Entry<Category, List<Announcement>> entry : db.getAnnouncementsInCategories().entrySet()) {
+            if (entry.getKey().getId() == categoryId) {
+                announcements.addAll(entry.getValue());
+                break;
+            }
+        }
+
+        return announcements;
+    }
+
+    static List<Announcement> fetchUserWishlist(int userId){
+        List<Announcement> announcementsWishList = new ArrayList<>();
+
+        for (Map.Entry<User, List<Announcement>> entry : db.getWishList().entrySet()) {
+            if (entry.getKey().getId() == userId) {
+                announcementsWishList.addAll(entry.getValue());
+                break;
+            }
+        }
+
+        return announcementsWishList;
+    }
+
+    static String updateWishlist(int userId, int announcementId){
+        db.getWishList().get(userId).add(db.getAnnouncements().get(announcementId));
+        return "success";
+    }
+
+     static Announcement findAnnouncementById(int announcementId){
+        List<Announcement> announcements = db.getAnnouncements(); // tu podobnie co funkcja powyżej
+         for (Announcement a : announcements) {
+             if (a.getId() == announcementId) return a;
+         }
+
+        return null;
+    }
+
+    static String addComment(int announcementId, int userId, String comment){
+        Announcement announcement = findAnnouncementByOwner(userId, announcementId);
+        List<String> comments = announcement.getComments();
+        comments.add(comment);
+        return "success";
+    }
+
+    static String updateAnnouncement(int announcementId, Announcement updatedData){
+        Announcement announcement = findAnnouncementById(announcementId);
+        announcement.setOwner(updatedData.getOwner());
+        announcement.setContent(updatedData.getContent());
+        announcement.setTitle(updatedData.getTitle());
+        return "success";
+    }
+
+    static Category createCategory(Request req){
+        Gson gson = new Gson();
+        return gson.fromJson(req.body(), Category.class);
+    }
+
+    static Category deleteCategory(int categoryId){
+        Category category = findCategoryById(categoryId);
+        if (category!= null) {
+            db.getCategories().remove(category);
+        }
+
+        return category;
+    }
+
+
     static User findUserById(int userId){
         List<User> users = db.getUsers();
-        for(int i = 0; i < users.size(); i++){
-            User u = users.get(i);
-            if(u.getId()==userId) return u; //potrzeba getterów i setterów w klasie User
+        for (User u : users) {
+            if (u.getId() == userId) return u;
         }
         return null;
     }
-//
-//    static String updateUserStatus(int userId, String status){
-//        // w klasie user potrzebne pole 'status', najlepiej typu String
-//        User u = findUserById(userId);
-//        u.setStatus(status); //potrzebne także gettery i settery do tego pola
-//        return u.getStatus();
-//    }
-//
-//    static List<Statistics> fetchStatistics (int userId, String status){ //pole statistics w DataBase ma być typu List<Statistics>?
-//        if(findUserById(userId) instanceof Admin){
-//            return db.getStatistics();
-//        } else return null;
-//    }
-//
-//    static String processStatistics(List<Statistics> stats) {
-//        // potrzebna metoda toString() w klasie Statistics
-//        String result = "";
-//        for (int i = 0; i < stats.size(); i++){
-//            result+= stats.get(i).toString();
-//        }
-//
-//        return result;
-//    }
 
+    static String updateUserStatus(int userId, boolean status) {
+        User u = findUserById(userId);
+        if (u != null) {
+            u.setBanStatus(status); //false - odbanowany, true - zbanowany
+        }
+        return "success";
+    }
 
+    static Statistics fetchStatistics (){
+        return db.getStatistics();
+    }
 }
 
 
