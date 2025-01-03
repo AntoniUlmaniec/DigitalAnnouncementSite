@@ -1,21 +1,22 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Announcement {
     private int id;
     private String title;
     private String content;
     private User owner;
+    private List<String> comments;
 
     public Announcement(int id, String title, String content, User owner){
         this.id = id;
         this.title = title;
         this.content = content;
         this.owner = owner;
+        this.comments = new ArrayList<>();
     };
 
     public Announcement(){
-    }
-
-    public void addComment(User user, String comment) {
-        // do dokoczenia
     }
 
     public int getId() {
@@ -48,6 +49,10 @@ public class Announcement {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public List<String> getComments() {
+        return comments;
     }
 }
 

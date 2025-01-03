@@ -5,12 +5,14 @@ public class User {
     private List<Announcement> wishList;
     private String username;
     private int id;
+    private boolean banStatus;
 
     public User(String username, int id) {
         this.numberOfAnnouncements = 0;
         this.wishList = new ArrayList<Announcement>();
         this.username = username;
         this.id = id;
+        this.banStatus = false;
     }
 
     public void publishAnnouncement(Announcement announcement) {
@@ -48,7 +50,6 @@ public class User {
     }
 
     public void commentOnAnnouncement(Announcement announcement, String comment) {
-        announcement.addComment(this, comment);
     }
 
     private Announcement findAnnouncementById(int id) {
@@ -73,5 +74,12 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+
+    public boolean isBanStatus() {
+        return banStatus;
+    }
+    public void setBanStatus(boolean banStatus) {
+        this.banStatus = banStatus;
     }
 }

@@ -171,13 +171,15 @@ public class System {
 //        return "success";
 //    }
 //
-//    static Announcement findAnnouncementById(int announcementId){
-//        ArrayList<Announcement> announcements = db.getAnnouncements(); // tu podobnie co funkcja powyżej
-//        for(int i = 0; i < announcements.size(); i++) {
-//            Announcement a = announcements.get(i);
-//            if (a.getId() == announcementId) return a;
-//        }
-//    }
+    static Announcement findAnnouncementById(int announcementId){
+        List<Announcement> announcements = db.getAnnouncements(); // tu podobnie co funkcja powyżej
+        for(int i = 0; i < announcements.size(); i++) {
+            Announcement a = announcements.get(i);
+            if (a.getId() == announcementId) return a;
+        }
+
+        return null;
+    }
 //
 //    static String addComment(int announcementId, int userId, String comment){
 //        // do zastanowienia
