@@ -26,7 +26,7 @@ public class Controller {
 //        post("/editAnnouncement",(req, res) -> editAnnouncement(req, res));
 //        post("/deleteAnnouncement",(req, res) -> deleteAnnouncement(req, res));
         post("/browseCategories",(req, res) -> browseCategories(req, res));
-        post("/browseAnnouncements",(req, res) -> browseAnnouncements(req, res));
+        post("/browseAnnouncements/:name",(req, res) -> browseAnnouncements(req, res));
 //        post("/addToWishlist",(req, res) -> addToWishlist(req, res));
 //        post("/commentOnAnnouncement",(req, res) -> commentOnAnnouncement(req, res));
 //        post("/addCategory",(req, res) -> addCategory(req, res));
@@ -87,7 +87,7 @@ public class Controller {
         List<Category>categories = db.getCategories();
         Category category = null;
         for (int i = 0; i < categories.size(); i++){
-            if (categories.get(i).getName() == req.params("name")){
+            if (categories.get(i).getName().equals(req.params("name"))){
                 category = categories.get(i);
             }
         }

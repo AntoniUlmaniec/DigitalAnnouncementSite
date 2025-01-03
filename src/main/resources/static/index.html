@@ -11,7 +11,7 @@
     <div class="main">
         <div id="select-user" class="select-user">Select User</div>
         <div id="select-category" class="select-category">Select Category</div>
-        <div class="select-announcement"></div>
+        <div id="select-announcement" class="select-announcement"></div>
         <div class="display-stats"></div>
     </div>
     <script defer>
@@ -61,8 +61,42 @@
         const displayAnnouncements = async (e) =>{
             const categoryName = e.target.innerHTML;
             let reqData = {"name":categoryName};
-            let data = await fetchAsync(reqData,"/browseAnnouncements");
-            console.log(data);
+            let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
+
+            let announcementsDiv = document.getElementById("select-announcement");
+            data.forEach(e=>{
+                // private int id;
+                // private String title;
+                // private String content;
+                // private User owner;
+                // private Category category;
+                // private List<String> comments;
+
+                let id = document.createElement("div");
+                id.innerText = e.id;
+
+                let title = document.createElement("div");
+                title.innerText = e.title;
+
+                let content = document.createElement("div");
+                content.innerText = e.content;
+
+                let owner = document.createElement("div");
+                owner.innerText = e.owner.username;
+
+                let category = document.createElement("div");
+                category.innerText = e.category.name;
+
+                let comments = document.createElement("div");
+                for(let i = 0; i < e.comments.length; i++){
+                    comments.innerText += e.comments[i] + "\n";
+                }
+
+                announcementsDiv.append(id,title,content,owner,category,comments);
+            })
+
+            const categoriesDiv = document.getElementById("select-category");
+            categoriesDiv.style.visibility = "hidden";
         }
 
         const fetchAsync = async (bodyObject, url) => {
