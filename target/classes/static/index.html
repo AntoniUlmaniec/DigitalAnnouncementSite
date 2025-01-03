@@ -4,18 +4,92 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        body {
+            width: 1920px;
+            height: 1080px;
+        }
+
+        .main {
+            font-family: "Segoe UI Light";
+            color: white;
+            font-size: 20px;
+        }
+
+        .select-user {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #123456;
+            margin:10px;
+        }
+
+        .select-announcement {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #123456;
+            color: white;
+            margin:10px;
+            visibility: hidden;
+        }
+
+        .select-category {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #123456;
+            margin:10px;
+            visibility: hidden;
+        }
+
+        .announcement {
+            background: #ffffff;
+            color: black;
+            margin: 10px;
+        }
+
+        .buttons-container{
+            width: auto;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .button {
+            margin: 5px;
+            width: 60px;
+            height: 50px;
+            background: #123456;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
 
     </style>
 </head>
 <body>
     <div class="main">
-        <div id="select-user" class="select-user">Select User</div>
-        <div id="select-category" class="select-category">Select Category</div>
-        <div id="select-announcement" class="select-announcement"></div>
+        <div id="select-user" class="select-user">Wybierz Użytkownika</div>
+        <div id="select-category" class="select-category">Przeglądaj Kategorie</div>
+        <div id="select-announcement" class="select-announcement">Przeglądaj ogłoszenia</div>
+        <div id="my-announcements" class="select-announcement">Moje Ogłoszenia</div>
         <div class="display-stats"></div>
     </div>
     <script defer>
         let user = "";
+        let userId = "";
         const loadUsers = async () => {
             let data = await fetchAsync({}, "/loadUsers");
             const usersDiv = document.getElementById("select-user");
@@ -24,47 +98,47 @@
                 element.classList.add("user-element");
                 element.innerHTML = e.username;
                 element.userId = e.id;
+                element.status = e.banStatus;
                 element.onclick = login;
+                element.onmouseover = (e)=>{e.target.style.background = "#1234ff"};
+                element.onmouseout = (e)=>{e.target.style.background = "#123456"};
+
                 usersDiv.appendChild(element);
             })
         }
 
         const login = async (e) => {
+            let banned = e.target.banStatus;
+            if(banned){
+                return; //nie można się zalogować na zbanowanego usera
+            }
+
+
             let id = e.target.userId;
             console.log(id);
+
             let reqData = {
                 "id":id
             }
             let data = await fetchAsync(reqData,"/login");
 
             if (data.state != "logged") return;
+            userId = id;
             user = e.target.innerHTML;
             console.log("zalogowano", user);
             const usersDiv = document.getElementById("select-user");
-            usersDiv.style.visibility = "hidden";
+            // usersDiv.style.visibility = "hidden";
+
+            await displayMyAnnouncements();
             await displayCategories();
         }
 
-        const displayCategories = async () =>{
-            let reqData = {};
-            let data = await fetchAsync(reqData, "/browseCategories");
-            const categoriesDiv = document.getElementById("select-category");
-            categoriesDiv.style.visibility = "visible";
-            data.forEach(e=>{
-                let elem = document.createElement("div");
-                elem.innerHTML = e.name;
-                elem.onclick = displayAnnouncements;
-                categoriesDiv.appendChild(elem);
-            })
-        }
+        const createAnnouncementsElements = (data, containerId,initialHTML) => {
+            let announcementsDiv = document.getElementById(containerId);
+            announcementsDiv.style.visibility = "visible";
+            announcementsDiv.innerHTML = initialHTML;
 
-        const displayAnnouncements = async (e) =>{
-            const categoryName = e.target.innerHTML;
-            let reqData = {"name":categoryName};
-            let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
-
-            let announcementsDiv = document.getElementById("select-announcement");
-            data.forEach(e=>{
+            data.forEach(e => {
                 // private int id;
                 // private String title;
                 // private String content;
@@ -88,15 +162,82 @@
                 category.innerText = e.category.name;
 
                 let comments = document.createElement("div");
-                for(let i = 0; i < e.comments.length; i++){
+                for (let i = 0; i < e.comments.length; i++) {
                     comments.innerText += e.comments[i] + "\n";
                 }
 
-                announcementsDiv.append(id,title,content,owner,category,comments);
+                const div = document.createElement("div");
+                div.id = e.id;
+                div.append(id, title, content, owner, category, comments)
+                div.classList.add("announcement");
+                announcementsDiv.appendChild(div);
+            })
+        }
+
+        const displayMyAnnouncements = async () => {
+            let reqData = {};
+            let data = await fetchAsync(reqData, "/fetchMyAnouncements/" + userId);
+            createAnnouncementsElements(data, "my-announcements","Moje Ogłoszenia");
+
+            const announcements = document.getElementById("my-announcements").childNodes;
+            announcements.forEach(e=>{
+                if(e.nodeName != "#text") {
+                    const buttonsDiv = document.createElement("div");
+                    buttonsDiv.classList.add("buttons-container");
+
+                    const deleteAnnouncement = document.createElement("div");
+                    deleteAnnouncement.onclick = deleteMyAnnouncement;
+                    deleteAnnouncement.classList.add("button");
+                    deleteAnnouncement.innerText = "usuń";
+                    buttonsDiv.appendChild(deleteAnnouncement);
+
+
+                    const editAnnouncement = document.createElement("div");
+                    editAnnouncement.onclick = editMyAnnouncement;
+                    editAnnouncement.classList.add("button");
+                    editAnnouncement.innerText = "edytuj";
+                    buttonsDiv.appendChild(editAnnouncement);
+
+                    e.appendChild(buttonsDiv);
+                };
             })
 
+
+            const createAnnouncement = document.createElement("div");
+        }
+
+        const deleteMyAnnouncement = async (e)=>{
+            const announcementId = e.target.parentElement.parentElement.id; // xDDDD
+            let data = await fetchAsync({},"/deleteAnnouncement/"+announcementId);
+            if (data.state === "success"){
+                await displayMyAnnouncements();
+            }
+        };
+        const editMyAnnouncement = (e)=>{};
+
+        const displayCategories = async () =>{
+            let reqData = {};
+            let data = await fetchAsync(reqData, "/browseCategories");
             const categoriesDiv = document.getElementById("select-category");
-            categoriesDiv.style.visibility = "hidden";
+            categoriesDiv.style.visibility = "visible";
+            categoriesDiv.innerHTML = "Przeglądaj kategorie";
+            data.forEach(e=>{
+                let elem = document.createElement("div");
+                elem.innerHTML = e.name;
+                elem.onclick = displayAnnouncements;
+                elem.onmouseover = (e)=>{e.target.style.background = "#1234ff"};
+                elem.onmouseout = (e)=>{e.target.style.background = "#123456"};
+                categoriesDiv.appendChild(elem);
+            })
+        }
+
+        const displayAnnouncements = async (e) =>{
+            const categoryName = e.target.innerHTML;
+            let reqData = {"name":categoryName};
+            let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
+            const announcementsDiv = document.getElementById("select-announcement");
+            createAnnouncementsElements(data, "select-announcement","Przeglądaj Ogłoszenia");
+
         }
 
         const fetchAsync = async (bodyObject, url) => {

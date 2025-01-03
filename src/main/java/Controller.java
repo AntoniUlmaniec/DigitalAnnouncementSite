@@ -22,9 +22,10 @@ public class Controller {
 
         post("/loadUsers",(req,res) -> loadUsers(req,res));
         post("/login",(req,res) -> login(req,res));
+        post("/fetchMyAnouncements/:userId",(req,res)-> displayUserAnnouncements(req,res));
 //        post("/publishAnnouncement",(req, res) -> publishAnnouncement(req, res)); // na razie losowe rzeczy, nie zwracaj uwagi na nazwy
 //        post("/editAnnouncement",(req, res) -> editAnnouncement(req, res));
-//        post("/deleteAnnouncement",(req, res) -> deleteAnnouncement(req, res));
+        post("/deleteAnnouncement/:id",(req, res) -> deleteAnnouncement(req, res));
         post("/browseCategories",(req, res) -> browseCategories(req, res));
         post("/browseAnnouncements/:name",(req, res) -> browseAnnouncements(req, res));
 //        post("/addToWishlist",(req, res) -> addToWishlist(req, res));
@@ -57,6 +58,19 @@ public class Controller {
         state.state = "not logged";
         return gson.toJson(state);
     }
+
+    static String displayUserAnnouncements(Request req, Response res){
+        Gson gson = new Gson();
+        int userId = Integer.parseInt(req.params("userId"));
+        ArrayList<Announcement> userAnnouncements = new ArrayList<>();
+        List<Announcement> allAnnouncements = db.getAnnouncements();
+        for(int i = 0; i < allAnnouncements.size(); i++){
+            if (allAnnouncements.get(i).getOwner().getId() == userId){
+                userAnnouncements.add(allAnnouncements.get(i));
+            }
+        }
+        return gson.toJson(userAnnouncements);
+    }
 //
 //    static String publishAnnouncement(Request req, Response res){
 //        // req.body() musi zawierać także informację o kategorii ogłoszenia
@@ -71,9 +85,16 @@ public class Controller {
 //        return "zedytowano ogłoszenie"; // roboczo zwraca prostego stringa
 //    }
 //
-//    static String deleteAnnouncement(Request req, Response res){
-//        return "usunięto ogłoszenie"; // roboczo zwraca prostego stringa
-//    }
+    static String deleteAnnouncement(Request req, Response res){
+        Gson gson = new Gson();
+        ResponseStatus resp = new ResponseStatus();
+
+        int announcementId = Integer.parseInt(req.params("id"));
+        List<Announcement> ann = db.getAnnouncementsInCategories().get(findAnnouncementById(announcementId).getCategory());
+        ann.remove(findAnnouncementById(announcementId));
+        resp.state = "success";
+        return gson.toJson(resp);
+    }
 //
     static String browseCategories(Request req, Response res){
         Gson gson = new Gson();

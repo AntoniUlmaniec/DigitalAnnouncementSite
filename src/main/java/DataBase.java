@@ -7,6 +7,10 @@ public class DataBase {
     private List<Category> categories;
     private Statistics statistics;
 
+    static int userId = 1;
+    static int announcementId = 1;
+    static int categoryId = 1;
+
     public DataBase() {
         announcementsInCategories = new HashMap<>();
         users = new ArrayList<>();
@@ -14,15 +18,25 @@ public class DataBase {
         categories = new ArrayList<>();
         statistics = new Statistics();
 
-        users.add(new User("tomek",1));
+        users.add(new User("tomek",userId));
+        userId += 1;
+        users.add(new User("olaf",userId));
+        userId += 1;
 
         Category cat = new Category();
         cat.setName("sport");
+        cat.setId(categoryId);
+        categoryId+=1;
         categories.add(cat);
 
-        Announcement announcement = new Announcement(1,"sprzedam opla","opel rocznik 2010, 100zł",users.get(0), cat);
+        Announcement announcement = new Announcement(announcementId,"sprzedam opla","opel rocznik 2010, 100zł",users.get(0), cat);
+        announcementId+=1;
+        Announcement announcement2 = new Announcement(announcementId,"sprzedam skocznie narciarską","opel rocznik 2010, 100zł",users.get(1), cat);
+        announcementId+=1;
+
         List<Announcement> sportAnnouncements = new ArrayList<>();
         sportAnnouncements.add(announcement);
+        sportAnnouncements.add(announcement2);
         announcementsInCategories.put(cat,sportAnnouncements);
     }
 
