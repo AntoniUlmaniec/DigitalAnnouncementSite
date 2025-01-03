@@ -14,4 +14,8 @@ public class Statistics {
     public int getActiveUsers() {
         return activeUsers;
     }
+
+    public String toString() {
+        return "Wszyscy użytkownicy: " + totalUsers + ", Wszystkie ogłoszenia: " + totalAnnouncements + ", Aktywni użytkownicy: " + activeUsers;
+    }
 }
