@@ -23,8 +23,9 @@ public class Controller {
         post("/loadUsers",(req,res) -> loadUsers(req,res));
         post("/login",(req,res) -> login(req,res));
         post("/fetchMyAnouncements/:userId",(req,res)-> displayUserAnnouncements(req,res));
-//        post("/publishAnnouncement",(req, res) -> publishAnnouncement(req, res)); // na razie losowe rzeczy, nie zwracaj uwagi na nazwy
-//        post("/editAnnouncement",(req, res) -> editAnnouncement(req, res));
+        post("/publishAnnouncement",(req, res) -> publishAnnouncement(req, res)); // na razie losowe rzeczy, nie zwracaj uwagi na nazwy
+        post("/editAnnouncement",(req, res) -> editAnnouncement(req, res));
+        post("/getAnnouncement/:announcementId",(req, res) -> getAnnouncement(req, res));
         post("/deleteAnnouncement/:id",(req, res) -> deleteAnnouncement(req, res));
         post("/browseCategories",(req, res) -> browseCategories(req, res));
         post("/browseAnnouncements/:name",(req, res) -> browseAnnouncements(req, res));
@@ -71,20 +72,28 @@ public class Controller {
         }
         return gson.toJson(userAnnouncements);
     }
-//
-//    static String publishAnnouncement(Request req, Response res){
-//        // req.body() musi zawierać także informację o kategorii ogłoszenia
-//        String success = saveAnnouncement(createAnnouncement(req));
-//        return success;
-//    }
-//
-//    static String editAnnouncement(Request req, Response res){
-//        Gson gson = new Gson();
-//        Announcement a = gson.fromJson(req.body(), Announcement.class);
-//        updateAnnouncement(a.getId(), a);
-//        return "zedytowano ogłoszenie"; // roboczo zwraca prostego stringa
-//    }
-//
+
+    static String publishAnnouncement(Request req, Response res){
+        Gson gson = new Gson();
+        // req.body() musi zawierać także informację o kategorii ogłoszenia
+        return gson.toJson(createAnnouncement(req));
+    }
+
+    static String editAnnouncement(Request req, Response res){
+        Gson gson = new Gson();
+        Announcement a = gson.fromJson(req.body(), Announcement.class);
+        String response = updateAnnouncement(a.getId(), a);
+        ResponseStatus resp = new ResponseStatus();
+        resp.state = response;
+        return gson.toJson(resp);
+    }
+
+    static String getAnnouncement(Request req, Response res){
+        Gson gson = new Gson();
+        int announcementId = Integer.parseInt(req.params("announcementId"));
+        return gson.toJson(findAnnouncementById(announcementId));
+    }
+
     static String deleteAnnouncement(Request req, Response res){
         Gson gson = new Gson();
         ResponseStatus resp = new ResponseStatus();
@@ -153,6 +162,12 @@ public class Controller {
     static Announcement createAnnouncement(Request req){
         Gson gson = new Gson();
         Announcement ann = gson.fromJson(req.body(), Announcement.class);
+        ann.setId(DataBase.announcementId);
+        DataBase.announcementId++;
+
+        ann.setOwner(findUserById(ann.getOwner().getId()));
+        ann.setCategory(findCategoryByName(ann.getCategory().getName()));
+
         saveAnnouncement(ann, ann.getCategory());
         return ann;
     }
@@ -187,6 +202,16 @@ public class Controller {
 
         return null;
     }
+
+    static Category findCategoryByName(String categoryName) {
+        List<Category> categories = db.getCategories();
+        for (Category cat : categories) {
+            if (cat.getName().equals(categoryName)) return cat;
+        }
+
+        return null;
+    }
+
     static List<Category> fetchCategories(){
         return db.getCategories();
     }
@@ -240,7 +265,6 @@ public class Controller {
 
     static String updateAnnouncement(int announcementId, Announcement updatedData){
         Announcement announcement = findAnnouncementById(announcementId);
-        announcement.setOwner(updatedData.getOwner());
         announcement.setContent(updatedData.getContent());
         announcement.setTitle(updatedData.getTitle());
         return "success";
