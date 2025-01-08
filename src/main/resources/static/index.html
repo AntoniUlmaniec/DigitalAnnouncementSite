@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Cyfrowa Tablica Ogłoszeń</title>
     <style>
         * {
             padding: 0;
@@ -11,22 +11,33 @@
         }
 
         body {
-            width: 1920px;
-            height: 1080px;
+            width: auto;
+            height: auto;
+            background-color: #66cdaa;
         }
 
         .main {
             font-family: "Segoe UI Light";
-            color: white;
-            font-size: 20px;
+            color: #00274d;
+            font-size: 26px;
         }
 
-        .select-user {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: #123456;
+         .select-user-container {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 40%;
+            text-align: center;
+        }
+
+        .select-user-header {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #00274d;
+            animation: blink 2s step-start infinite;
         }
 
         .select-announcement {
@@ -50,11 +61,25 @@
 
         .select-category {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: space-around;
             align-items: center;
-            background: #123456;
+            padding: 20px;
+            background: #7FFFD4;
             visibility: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .select-category div {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #f5f5f5;
+            color: #00274d;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: background 0.3s;
         }
 
         .announcement {
@@ -92,11 +117,40 @@
             align-items: center;
             color: black;
         }
+
+        @keyframes blink {
+            0% { opacity: 1 }
+            10% { opacity: 0.8 }
+            20% { opacity: 0.7 }
+            30% { opacity: 0.6 }
+            40% { opacity: 0.4 }
+            50% { opacity: 0.2 }
+            60% { opacity: 0.4 }
+            70% { opacity: 0.6 }
+            80% { opacity: 0.7 }
+            90% { opacity: 0.8 }
+            100% { opacity: 1 }
+        }
+
+        #digital-board-header {
+            margin: 30px;
+            text-align: center;
+            font-size: 60px;
+            font-weight: bold;
+            color: #00274d;
+            background-color: #f5f5f5;
+        }
     </style>
 </head>
 <body>
     <div class="main">
-        <div id="select-user" class="select-user">Wybierz Użytkownika</div>
+        <div id="digital-board-header">Cyfrowa Tablica Ogłoszeń</div>
+        <div id="select-user" class="select-user-container">
+            <div class="select-user-header">! Wybierz Użytkownika !</div>
+        </div>
+        <div id="home-button" style="display: none; text-align: center; margin: 10px;">
+            <button onclick="goToHome()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Home</button>
+        </div>
         <div id="select-category" class="select-category">Przeglądaj Kategorie</div>
         <div id="select-announcement" class="select-announcement">Przeglądaj ogłoszenia</div>
         <div id="my-announcements" class="select-announcement">Moje Ogłoszenia</div>
@@ -117,8 +171,16 @@
                 element.userId = e.id;
                 element.status = e.banStatus;
                 element.onclick = login;
-                element.onmouseover = (e)=>{e.target.style.background = "#1234ff"};
-                element.onmouseout = (e)=>{e.target.style.background = "#123456"};
+                element.onmouseover = (e) => {
+                    e.target.style.color = "red";
+                    e.target.style.fontWeight = "bold";
+                    e.target.style.cursor = "pointer";
+                };
+                element.onmouseout = (e) => {
+                    e.target.style.color = "#00274d";
+                    e.target.style.fontWeight = "normal";
+                    e.target.style.cursor = "default";
+                };
 
                 usersDiv.appendChild(element);
             })
@@ -143,14 +205,37 @@
             userId = id;
             user = e.target.innerHTML;
             console.log("zalogowano", user);
+
             // const usersDiv = document.getElementById("select-user");
             // usersDiv.style.visibility = "hidden";
+
+            document.getElementById("select-user").style.display = "none";
+            document.getElementById("digital-board-header").style.display = "none";
+            document.getElementById("home-button").style.display = "block";
+
             document.getElementById("edit-announcement").innerHTML = '';
             document.getElementById("create-announcement").innerHTML = '';
 
             await displayMyAnnouncements();
             await displayCategories();
         }
+
+        const goToHome = () => {
+            document.getElementById("select-user").style.display = "block";
+            document.getElementById("digital-board-header").style.display = "block";
+            document.getElementById("home-button").style.display = "none";
+
+            document.getElementById("select-category").style.visibility = "hidden";
+            document.getElementById("select-announcement").style.visibility = "hidden";
+            document.getElementById("my-announcements").style.visibility = "hidden";
+            document.getElementById("edit-announcement").style.visibility = "hidden";
+            document.getElementById("create-announcement").style.visibility = "hidden";
+
+            user = "";
+            userId = "";
+            document.getElementById("select-announcement").innerHTML = '';
+        };
+
 
         const createAnnouncementsElements = (data, containerId,initialHTML) => {
             let announcementsDiv = document.getElementById(containerId);
@@ -365,21 +450,35 @@
             //odesłanie w funkcji sendEdited
         };
 
-        const displayCategories = async () =>{
+        const displayCategories = async () => {
             let reqData = {};
             let data = await fetchAsync(reqData, "/browseCategories");
             const categoriesDiv = document.getElementById("select-category");
             categoriesDiv.style.visibility = "visible";
-            categoriesDiv.innerHTML = "Przeglądaj kategorie";
-            data.forEach(e=>{
+            categoriesDiv.innerHTML = ""; // Wyczyszczenie poprzednich danych
+
+            const title = document.createElement("h2");
+            title.innerText = "Kategorie Ogłoszeń:";
+            title.style.color = "#00274d";
+            title.style.marginBottom = "20px";
+            categoriesDiv.appendChild(title);
+
+            data.forEach(e => {
                 let elem = document.createElement("div");
                 elem.innerHTML = e.name;
                 elem.onclick = displayAnnouncements;
-                elem.onmouseover = (e)=>{e.target.style.background = "#1234ff"};
-                elem.onmouseout = (e)=>{e.target.style.background = "#123456"};
+                elem.onmouseover = (e) => {
+                    e.target.style.background = "#9370DB";
+                    e.target.style.fontWeight = "bold";
+                };
+                elem.onmouseout = (e) => {
+                    e.target.style.background = "#f5f5f5";
+                    e.target.style.fontWeight = "normal";
+                };
                 categoriesDiv.appendChild(elem);
-            })
-        }
+            });
+        };
+
 
         const displayAnnouncements = async (e) =>{
             const categoryName = e.target.innerHTML;
