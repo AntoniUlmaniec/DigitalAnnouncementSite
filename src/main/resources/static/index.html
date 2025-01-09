@@ -98,13 +98,23 @@
 
         .button {
             margin: 5px;
-            width: 60px;
+            width: auto;
             height: 50px;
             background: #123456;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
+        }
+
+         .button:hover{
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .button2:hover{
+            font-size: 28px;
+            cursor: pointer;
         }
 
         .button2 {
@@ -117,6 +127,7 @@
             align-items: center;
             color: black;
         }
+
 
         @keyframes blink {
             0% { opacity: 1 }
@@ -156,14 +167,17 @@
         <div id="my-announcements" class="select-announcement">Moje Ogłoszenia</div>
         <div id="edit-announcement" class="select-announcement"></div>
         <div id="create-announcement" class="select-announcement"></div>
+        <div id="wishlist" class="select-announcement"></div>
         <div class="display-stats"></div>
     </div>
     <script defer>
         let user = "";
         let userId = "";
+        let isAdmin = false;
         const loadUsers = async () => {
             let data = await fetchAsync({}, "/loadUsers");
             const usersDiv = document.getElementById("select-user");
+            usersDiv.innerHTML = '';
             data.forEach(e=>{
                 let element = document.createElement("div");
                 element.classList.add("user-element");
@@ -187,37 +201,36 @@
         }
 
         const login = async (e) => {
-            let banned = e.target.banStatus;
+            let banned = e.target.status;
             if(banned){
+                console.log("użytkownik zbanowany");
                 return; //nie można się zalogować na zbanowanego usera
             }
 
 
             let id = e.target.userId;
-            console.log(id);
 
             let reqData = {
                 "id":id
             }
             let data = await fetchAsync(reqData,"/login");
 
-            if (data.state != "logged") return;
-            userId = id;
-            user = e.target.innerHTML;
-            console.log("zalogowano", user);
+            isAdmin = false;
+            if (data.state == "admin" || data.state == "logged") {
+                if (data.state == "admin") isAdmin = true;
+                userId = id;
+                user = e.target.innerHTML;
+                console.log("zalogowano:", user, "admin:", isAdmin, "id:", userId);
+                document.getElementById("select-user").style.display = "none";
+                document.getElementById("digital-board-header").style.display = "none";
+                document.getElementById("home-button").style.display = "block";
 
-            // const usersDiv = document.getElementById("select-user");
-            // usersDiv.style.visibility = "hidden";
+                document.getElementById("edit-announcement").innerHTML = '';
+                document.getElementById("create-announcement").innerHTML = '';
 
-            document.getElementById("select-user").style.display = "none";
-            document.getElementById("digital-board-header").style.display = "none";
-            document.getElementById("home-button").style.display = "block";
-
-            document.getElementById("edit-announcement").innerHTML = '';
-            document.getElementById("create-announcement").innerHTML = '';
-
-            await displayMyAnnouncements();
-            await displayCategories();
+                await displayMyAnnouncements();
+                await displayCategories();
+            }
         }
 
         const goToHome = () => {
@@ -233,6 +246,7 @@
 
             user = "";
             userId = "";
+            isAdmin = false;
             document.getElementById("select-announcement").innerHTML = '';
         };
 
@@ -242,14 +256,8 @@
             announcementsDiv.style.visibility = "visible";
             announcementsDiv.innerHTML = initialHTML;
 
+            console.log(data);
             data.forEach(e => {
-                // private int id;
-                // private String title;
-                // private String content;
-                // private User owner;
-                // private Category category;
-                // private List<String> comments;
-
                 let id = document.createElement("div");
                 id.innerText = e.id;
 
@@ -266,16 +274,91 @@
                 category.innerText = e.category.name;
 
                 let comments = document.createElement("div");
+                comments.innerHTML = "Komentarze<br>";
                 for (let i = 0; i < e.comments.length; i++) {
-                    comments.innerText += e.comments[i] + "\n";
+                    comments.innerHTML += e.comments[i] + "<br>";
+                }
+
+                let commentDiv = document.createElement("div");
+
+                let comment = document.createElement("input");
+                comment.placeholder = "napisz komentarz...";
+
+                let sendComment = document.createElement("div");
+                sendComment.classList.add("button");
+                sendComment.innerText = "wyślij komentarz";
+                sendComment.onclick = async(event) =>{
+                    console.log(comment.value);
+                    let data = await fetchAsync({state:user+":"+comment.value},"/commentOnAnnouncement/"+e.id);
+                    if(data != null){
+                        await displayAnnouncementsByCategory(e.category.name);
+                        await displayMyAnnouncements();
+                    }
+                }
+                commentDiv.append(comment, sendComment);
+
+                const heart = document.createElement("div");
+                heart.style.width = "25px";
+                heart.style.height = "25px";
+
+
+                if(containerId === "wishlist"){
+                    heart.clicked = true
+                    heart.style.backgroundImage = 'url("heart.png")';
+                }else {
+                    heart.clicked = false;
+                    heart.style.backgroundImage = 'url("heart_off.png")';
+                }
+
+                heart.style.backgroundSize = "25px";
+                heart.onclick = async (ev) => {
+                    heart.clicked = !heart.clicked;
+                    if (heart.clicked){
+                        heart.style.backgroundImage = 'url("heart.png")';
+                    }else {
+                        heart.style.backgroundImage = 'url("heart_off.png")';
+                    }
+                    let wishlistData = await fetchAsync({state:e.id},"/addToWishlist/"+userId);
+                    createAnnouncementsElements(wishlistData,"wishlist","Ulubione");
                 }
 
                 const div = document.createElement("div");
                 div.id = e.id;
-                div.append(id, title, content, owner, category, comments)
+                div.append(id, title, content, owner, category, comments, commentDiv, heart);
                 div.classList.add("announcement");
+
+                if (isAdmin){
+                    const deleteButton = document.createElement("div");
+                    deleteButton.onclick = async ()=>{
+                        let data = await fetchAsync({},"/deleteAnnouncement/"+e.id);
+                        if (data.state === "success"){
+                            document.getElementById("edit-announcement").innerHTML = '';
+                            await displayAnnouncementsByCategory(category.innerText);
+                        }
+                    }
+                    deleteButton.innerText = "usuń";
+                    deleteButton.classList.add("button");
+
+                    const banButton = document.createElement("div");
+                    banButton.classList.add("button");
+                    banButton.innerText = "zbanuj";
+                    banButton.onclick = async() =>{
+                        let id = e.owner.id;
+                        let data = await banUser(id);
+                        if(data.state === "success"){
+                            await loadUsers();
+                        }
+                    }
+
+                    div.append(deleteButton,banButton);
+                }
+
                 announcementsDiv.appendChild(div);
             })
+        }
+
+        const banUser = async (id) => {
+            return await fetchAsync({id:id},"/banUser");
         }
 
         const createEditionAnnouncementsElements = (data, containerId, initialHTML) => {
@@ -342,7 +425,7 @@
 
             const announcements = document.getElementById("my-announcements").childNodes;
             announcements.forEach(e=>{
-                if(e.nodeName != "#text") {
+                if(e.nodeName !== "#text") {
                     const buttonsDiv = document.createElement("div");
                     buttonsDiv.classList.add("buttons-container");
 
@@ -423,7 +506,6 @@
                 comments:[]
             };
 
-            console.log(data);
             let announcement = await fetchAsync(data,"/publishAnnouncement");
 
             if(announcement != undefined){
@@ -466,25 +548,70 @@
             data.forEach(e => {
                 let elem = document.createElement("div");
                 elem.innerHTML = e.name;
+                elem.name = e.name;
                 elem.onclick = displayAnnouncements;
                 elem.onmouseover = (e) => {
                     e.target.style.background = "#9370DB";
-                    e.target.style.fontWeight = "bold";
+                    // e.target.style.fontWeight = "bold";
                 };
                 elem.onmouseout = (e) => {
                     e.target.style.background = "#f5f5f5";
-                    e.target.style.fontWeight = "normal";
+                    // e.target.style.fontWeight = "normal";
                 };
                 categoriesDiv.appendChild(elem);
+                if(isAdmin){
+                    const removeCategory = document.createElement("div");
+                    removeCategory.classList.add("button");
+                    removeCategory.innerText = "usuń";
+                    removeCategory.onclick = async(event) => {
+                        event.stopPropagation();
+                        let respData = await fetchAsync({id:e.id},"/removeCategory");
+                        if(respData != null){
+                            await displayCategories();
+                            document.getElementById("select-announcement").innerHTML = 'Przeglądaj Ogłoszenia';
+                        }
+                    }
+                    elem.appendChild(removeCategory);
+                }
             });
+
+            if(isAdmin){
+                const addCategory = document.createElement("div");
+                addCategory.classList.add("button");
+                addCategory.innerText = "dodaj";
+                addCategory.onclick = (e) => {
+                    addCategory.innerHTML = '';
+                    addCategory.onclick = ()=>{return;};
+                    const categoryName = document.createElement("textarea");
+                    categoryName.placeholder = "nazwa...";
+
+                    const sendNewCategory = document.createElement("div");
+                    sendNewCategory.innerText = "dodaj";
+                    sendNewCategory.onclick = async(ev)=>{
+                        let data = await fetchAsync({name:categoryName.value},"/addCategory");
+                        if(data != null){
+                            await displayCategories();
+                        }
+                    };
+
+                    e.target.append(categoryName,sendNewCategory);
+                }
+                categoriesDiv.appendChild(addCategory);
+            }
         };
+
+        const displayAnnouncementsByCategory = async (categoryName) =>{
+            let reqData = {"name":categoryName};
+            let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
+            console.log(data);
+            createAnnouncementsElements(data, "select-announcement","Przeglądaj Ogłoszenia");
+        }
 
 
         const displayAnnouncements = async (e) =>{
-            const categoryName = e.target.innerHTML;
+            const categoryName = e.target.name;
             let reqData = {"name":categoryName};
             let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
-            const announcementsDiv = document.getElementById("select-announcement");
             createAnnouncementsElements(data, "select-announcement","Przeglądaj Ogłoszenia");
         }
 

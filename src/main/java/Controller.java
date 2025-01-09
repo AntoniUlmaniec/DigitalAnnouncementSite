@@ -29,11 +29,11 @@ public class Controller {
         post("/deleteAnnouncement/:id",(req, res) -> deleteAnnouncement(req, res));
         post("/browseCategories",(req, res) -> browseCategories(req, res));
         post("/browseAnnouncements/:name",(req, res) -> browseAnnouncements(req, res));
-//        post("/addToWishlist",(req, res) -> addToWishlist(req, res));
-//        post("/commentOnAnnouncement",(req, res) -> commentOnAnnouncement(req, res));
-//        post("/addCategory",(req, res) -> addCategory(req, res));
-//        post("/removeCategory",(req, res) -> removeCategory(req, res));
-//        post("/banUser",(req, res) -> banUser(req, res));
+        post("/addToWishlist/:id",(req, res) -> addToWishlist(req, res));
+        post("/commentOnAnnouncement/:id",(req, res) -> commentOnAnnouncement(req, res));
+        post("/addCategory",(req, res) -> addCategory(req, res));
+        post("/removeCategory",(req, res) -> removeCategory(req, res));
+        post("/banUser",(req, res) -> banUser(req, res));
 //        post("/viewGeneralStatistics",(req, res) -> viewGeneralStatistics(req, res));
 
     }
@@ -54,8 +54,12 @@ public class Controller {
         ResponseStatus state = new ResponseStatus();
         if (u != null){
             state.state = "logged";
+            if (u.getClass() == Admin.class){
+                state.state = "admin";
+            }
             return gson.toJson(state);
         }
+
         state.state = "not logged";
         return gson.toJson(state);
     }
@@ -131,26 +135,42 @@ public class Controller {
         List<Announcement> announcements = db.getAnnouncementsInCategories().get(category);
         return gson.toJson(announcements); // roboczo zwraca prostego stringa
     }
-//
-//    static String addToWishlist(Request req, Response res){
-//        return "wyświetlono kategorie"; // roboczo zwraca prostego stringa
-//    }
-//
-//    static String commentOnAnnouncement(Request req, Response res){
-//        return "wyświetlono kategorie"; // roboczo zwraca prostego stringa
-//    }
-//
-//    static String addCategory(Request req, Response res){
-//        return "wyświetlono kategorie"; // roboczo zwraca prostego stringa
-//    }
-//
-//    static String removeCategory(Request req, Response res){
-//        return "wyświetlono kategorie"; // roboczo zwraca prostego stringa
-//    }
-//
-//    static String banUser(Request req, Response res){
-//        return "wyświetlono kategorie"; // roboczo zwraca prostego stringa
-//    }
+
+    static String addToWishlist(Request req, Response res){
+        Gson gson = new Gson();
+        ResponseStatus data = gson.fromJson(req.body(), ResponseStatus.class);
+        int userId = Integer.parseInt(req.params("id"));
+        return updateWishlist(userId,Integer.parseInt(data.state)); // roboczo zwraca prostego stringa
+    }
+
+    static String commentOnAnnouncement(Request req, Response res){
+        Gson gson = new Gson();
+        ResponseStatus data = gson.fromJson(req.body(), ResponseStatus.class);
+        int announcementId = Integer.parseInt(req.params("id"));
+        findAnnouncementById(announcementId).getComments().add(data.state);
+
+        ResponseStatus resp = new ResponseStatus();
+        resp.state = "success";
+        return gson.toJson(resp);
+    }
+
+    static String addCategory(Request req, Response res){
+        Gson gson = new Gson();
+        return gson.toJson(createCategory(req));
+    }
+
+    static String removeCategory(Request req, Response res){
+        Gson gson = new Gson();
+        Id id = gson.fromJson(req.body(), Id.class);
+        return gson.toJson(deleteCategory(id.id));
+    }
+
+    static String banUser(Request req, Response res){
+        Gson gson = new Gson();
+        ResponseStatus resp = new ResponseStatus();
+        resp.state = updateUserStatus(gson.fromJson(req.body(), Id.class).id, true);
+        return gson.toJson(resp);
+    }
 //
 //    static String viewGeneralStatistics(Request req, Response res){
 //        return "wyświetlono kategorie"; // roboczo zwraca prostego stringa
@@ -243,8 +263,24 @@ public class Controller {
     }
 
     static String updateWishlist(int userId, int announcementId){
-        db.getWishList().get(userId).add(db.getAnnouncements().get(announcementId));
-        return "success";
+        Gson gson = new Gson();
+        User u = findUserById(userId);
+        List<Announcement> wishlist = db.getWishList().get(u);
+        Announcement ann = findAnnouncementById(announcementId);
+        if (wishlist == null) {
+            wishlist = new ArrayList<>();
+            wishlist.add(ann);
+            db.getWishList().put(u, wishlist);
+            return gson.toJson(wishlist);
+        }
+
+        if (!wishlist.contains(ann)){
+            wishlist.add(ann);
+            return gson.toJson(wishlist);
+        }
+
+        wishlist.remove(ann);
+        return gson.toJson(wishlist);
     }
 
      static Announcement findAnnouncementById(int announcementId){
@@ -272,12 +308,17 @@ public class Controller {
 
     static Category createCategory(Request req){
         Gson gson = new Gson();
-        return gson.fromJson(req.body(), Category.class);
+        Category newCat = gson.fromJson(req.body(), Category.class);
+        newCat.setId(DataBase.categoryId++);
+        db.getCategories().add(newCat);
+        db.getAnnouncementsInCategories().put(newCat,new ArrayList<>());
+        return newCat;
     }
 
     static Category deleteCategory(int categoryId){
         Category category = findCategoryById(categoryId);
         if (category!= null) {
+            db.getAnnouncementsInCategories().remove(category); // usuwamy wszystkie ogłoszenia z danej kategorii
             db.getCategories().remove(category);
         }
 
