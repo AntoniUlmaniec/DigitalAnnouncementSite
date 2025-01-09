@@ -34,7 +34,7 @@ public class Controller {
         post("/addCategory",(req, res) -> addCategory(req, res));
         post("/removeCategory",(req, res) -> removeCategory(req, res));
         post("/banUser",(req, res) -> banUser(req, res));
-//        post("/viewGeneralStatistics",(req, res) -> viewGeneralStatistics(req, res));
+        post("/viewGeneralStatistics",(req, res) -> viewGeneralStatistics(req, res));
 
     }
 
@@ -171,14 +171,16 @@ public class Controller {
         resp.state = updateUserStatus(gson.fromJson(req.body(), Id.class).id, true);
         return gson.toJson(resp);
     }
-//
-//    static String viewGeneralStatistics(Request req, Response res){
-//        return "wyświetlono kategorie"; // roboczo zwraca prostego stringa
-//    }
-//
-//
-//
-//    // obsługa bazy danych (system - baza danych)
+
+    static String viewGeneralStatistics(Request req, Response res){
+        Gson gson = new Gson();
+        Statistics stats = new Statistics(db.getUsers().size(), db.getAnnouncements().size(), 1);
+        return gson.toJson(stats); // roboczo zwraca prostego stringa
+    }
+
+
+
+    // obsługa bazy danych (system - baza danych)
     static Announcement createAnnouncement(Request req){
         Gson gson = new Gson();
         Announcement ann = gson.fromJson(req.body(), Announcement.class);

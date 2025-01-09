@@ -16,9 +16,9 @@ public class Admin extends User {
         // do dokonczenia
     }
 
-    public Statistics viewGeneralStatistics() {
-        // do dokonczenia
-
-        return new Statistics();
-    }
+//    public Statistics viewGeneralStatistics() {
+//        // do dokonczenia
+//
+//        return new Statistics();
+//    }
 }

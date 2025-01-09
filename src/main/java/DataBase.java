@@ -75,7 +75,7 @@ public class DataBase {
         users = new ArrayList<>();
         wishList = new HashMap<>();
         categories = new ArrayList<>();
-        statistics = new Statistics();
+        statistics = new Statistics(0,0,0);
 
         users.add(new User("Olaf", userId++));
         users.add(new User("Piotr", userId++));

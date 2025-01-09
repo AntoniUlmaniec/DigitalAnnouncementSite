@@ -168,7 +168,7 @@
         <div id="edit-announcement" class="select-announcement"></div>
         <div id="create-announcement" class="select-announcement"></div>
         <div id="wishlist" class="select-announcement"></div>
-        <div class="display-stats"></div>
+        <div id="display-stats" class="select-announcement"></div>
     </div>
     <script defer>
         let user = "";
@@ -318,8 +318,8 @@
                     }else {
                         heart.style.backgroundImage = 'url("heart_off.png")';
                     }
-                    let data = await fetchAsync({state:e.id},"/addToWishlist/"+userId);
-                    createAnnouncementsElements(data,"wishlist","Ulubione");
+                    let wishlistData = await fetchAsync({state:e.id},"/addToWishlist/"+userId);
+                    createAnnouncementsElements(wishlistData,"wishlist","Ulubione");
                 }
 
                 const div = document.createElement("div");
@@ -328,6 +328,7 @@
                 div.classList.add("announcement");
 
                 if (isAdmin){
+                    getStats();
                     const deleteButton = document.createElement("div");
                     deleteButton.onclick = async ()=>{
                         let data = await fetchAsync({},"/deleteAnnouncement/"+e.id);
@@ -359,6 +360,21 @@
 
         const banUser = async (id) => {
             return await fetchAsync({id:id},"/banUser");
+        }
+
+        const getStats = async ()=>{
+            const container = document.getElementById("display-stats")
+            container.innerHTML = '';
+            container.style.visibility = 'visible';
+            const button = document.createElement("div");
+            button.innerText = "statystyki";
+            button.classList.add("button");
+            button.onclick = async()=>{
+                let data = await fetchAsync({},"/viewGeneralStatistics");
+                container.innerHTML += `<div>Liczba użytkowników:${data.totalUsers}</div>
+                <div>Liczba ogłoszeń:${data.totalAnnouncements}</div>`;
+            }
+            container.appendChild(button);
         }
 
         const createEditionAnnouncementsElements = (data, containerId, initialHTML) => {
