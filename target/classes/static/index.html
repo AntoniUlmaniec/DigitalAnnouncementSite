@@ -151,6 +151,18 @@
             color: #00274d;
             background-color: #f5f5f5;
         }
+
+        #navigation-container {
+            display: none;
+            width: 50%;
+            text-align: center;
+            margin: 20px auto;
+            padding: 10px;
+            background: #7FFFD4;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
     </style>
 </head>
 <body>
@@ -159,8 +171,12 @@
         <div id="select-user" class="select-user-container">
             <div class="select-user-header">! Wybierz Użytkownika !</div>
         </div>
-        <div id="home-button" style="display: none; text-align: center; margin: 10px;">
+        <div id="navigation-container">
             <button onclick="goToHome()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Home</button>
+            <button onclick="showCategories()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Kategorie</button>
+            <button onclick="createNewAnnouncement()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Dodaj Ogłoszenie</button>
+            <button onclick="showMyAnnouncements()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Moje Ogłoszenia</button>
+            <button onclick="showMyWishList()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Ulubione</button>
         </div>
         <div id="select-category" class="select-category">Przeglądaj Kategorie</div>
         <div id="select-announcement" class="select-announcement">Przeglądaj ogłoszenia</div>
@@ -223,7 +239,7 @@
                 console.log("zalogowano:", user, "admin:", isAdmin, "id:", userId);
                 document.getElementById("select-user").style.display = "none";
                 document.getElementById("digital-board-header").style.display = "none";
-                document.getElementById("home-button").style.display = "block";
+                document.getElementById("navigation-container").style.display = "block";
 
                 document.getElementById("edit-announcement").innerHTML = '';
                 document.getElementById("create-announcement").innerHTML = '';
@@ -236,7 +252,7 @@
         const goToHome = () => {
             document.getElementById("select-user").style.display = "block";
             document.getElementById("digital-board-header").style.display = "block";
-            document.getElementById("home-button").style.display = "none";
+            document.getElementById("navigation-container").style.display = "none";
 
             document.getElementById("select-category").style.visibility = "hidden";
             document.getElementById("select-announcement").style.visibility = "hidden";
