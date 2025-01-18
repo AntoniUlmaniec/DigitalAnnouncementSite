@@ -42,10 +42,9 @@
 
         .select-announcement {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #123456;
+            background: #66cdaa;
             color: white;
             visibility: hidden;
         }
@@ -55,8 +54,62 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #ffffff;
-            color: black;
+            background: #f9f9f9;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .create-announcement-title {
+            font-size: 50px;
+            font-weight: bold;
+            color: #00274d;
+            background: #7FFFD4;
+            text-align: center;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            width: 40%;
+            border-radius: 10px;
+        }
+
+        .create-announcement input,
+        .create-announcement textarea,
+        .create-announcement select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .create-announcement textarea {
+            height: 150px;
+            resize: none;
+        }
+
+        .create-announcement .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .create-announcement .button:hover {
+            background-color: #45a049;
+        }
+
+        .create-announcement .category-select {
+            width: 100%;
+            margin-bottom: 10px;
         }
 
         .select-category {
@@ -83,9 +136,94 @@
         }
 
         .announcement {
-            background: #ffffff;
-            color: black;
-            margin: 10px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            color: #333;
+            margin: 15px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .announcement:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .announcement .title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #0073e6;
+            margin-bottom: 15px;
+        }
+
+        .announcement .content {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .announcement .owner {
+            font-size: 1em;
+            color: #999;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .announcement .category {
+            display: inline-block;
+            font-size: 0.9em;
+            color: white;
+            background: #66cdaa;
+            padding: 7px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .announcement .comments {
+            font-size: 1em;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        .announcement .button {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1em;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .announcement .button:hover {
+            background: #45a049;
+        }
+
+        .announcement-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            margin: 20px auto;
+            max-width: 90%;
+        }
+
+        .announcement-container > .announcement {
+            flex: 1 1 calc(48% - 20px);
+            max-width: 800px;
+        }
+
+         .category-header {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: #00274d;
         }
 
         .buttons-container{
@@ -105,6 +243,15 @@
             justify-content: center;
             align-items: center;
             color: white;
+        }
+
+        .button.delete {
+            background-color: red;
+            color: white;
+        }
+
+        .button.delete:hover {
+            background-color: #bd0823;
         }
 
          .button:hover{
@@ -128,6 +275,126 @@
             color: black;
         }
 
+        .comments-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .comments-container input {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: auto;
+            height: 42px;
+            box-sizing: border-box;
+            margin-right: 10px;
+        }
+
+        .comments-container .button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            height: 42px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            max-width: 600px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .modal.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        #save-changes {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        #save-changes:hover {
+            background-color: #45a049;
+        }
+
+        #cancel-edit {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        #cancel-edit:hover {
+            background-color: #e53935;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        #edit-title, #edit-content {
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                width: 80%;
+                padding: 20px;
+            }
+        }
 
         @keyframes blink {
             0% { opacity: 1 }
@@ -166,498 +433,613 @@
     </style>
 </head>
 <body>
-    <div class="main">
-        <div id="digital-board-header">Cyfrowa Tablica Ogłoszeń</div>
-        <div id="select-user" class="select-user-container">
-            <div class="select-user-header">! Wybierz Użytkownika !</div>
-        </div>
-        <div id="navigation-container">
-            <button onclick="goToHome()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Home</button>
-            <button onclick="showCategories()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Kategorie</button>
-            <button onclick="createNewAnnouncement()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Dodaj Ogłoszenie</button>
-            <button onclick="showMyAnnouncements()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Moje Ogłoszenia</button>
-            <button onclick="showMyWishList()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Ulubione</button>
-        </div>
-        <div id="select-category" class="select-category">Przeglądaj Kategorie</div>
-        <div id="select-announcement" class="select-announcement">Przeglądaj ogłoszenia</div>
-        <div id="my-announcements" class="select-announcement">Moje Ogłoszenia</div>
-        <div id="edit-announcement" class="select-announcement"></div>
-        <div id="create-announcement" class="select-announcement"></div>
-        <div id="wishlist" class="select-announcement"></div>
-        <div id="display-stats" class="select-announcement"></div>
+<div class="main">
+    <div id="digital-board-header">Cyfrowa Tablica Ogłoszeń</div>
+    <div id="select-user" class="select-user-container">
+        <div class="select-user-header">! Wybierz Użytkownika !</div>
     </div>
-    <script defer>
-        let user = "";
-        let userId = "";
-        let isAdmin = false;
-        const loadUsers = async () => {
-            let data = await fetchAsync({}, "/loadUsers");
-            const usersDiv = document.getElementById("select-user");
-            usersDiv.innerHTML = '';
-            data.forEach(e=>{
-                let element = document.createElement("div");
-                element.classList.add("user-element");
-                element.innerHTML = e.username;
-                element.userId = e.id;
-                element.status = e.banStatus;
-                element.onclick = login;
-                element.onmouseover = (e) => {
-                    e.target.style.color = "red";
-                    e.target.style.fontWeight = "bold";
-                    e.target.style.cursor = "pointer";
-                };
-                element.onmouseout = (e) => {
-                    e.target.style.color = "#00274d";
-                    e.target.style.fontWeight = "normal";
-                    e.target.style.cursor = "default";
-                };
+    <div id="navigation-container">
+        <button onclick="goToHome()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Home</button>
+        <button onclick="showCategories()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Kategorie
+        </button>
+        <button onclick="createNewAnnouncement()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Dodaj
+            Ogłoszenie
+        </button>
+        <button onclick="showMyAnnouncements()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Moje
+            Ogłoszenia
+        </button>
+        <button onclick="showMyWishList()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Ulubione
+        </button>
+    </div>
+    <div id="select-category" class="select-category"></div>
+    <div id="select-announcement" class="select-announcement"></div>
+    <div id="my-announcements" class="select-announcement">a</div>
+    <div class="announcement-container" id="announcement-container"></div>
+    <div id="edit-announcement" class="select-announcement"></div>
+    <div id="create-announcement" class="select-announcement"></div>
+    <div id="wishlist" class="select-announcement"></div>
+    <div id="display-stats" class="select-announcement"></div>
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="edit-modal" class="modal">
+        <h2>Edytuj Ogłoszenie</h2>
+        <input id="edit-title" placeholder="Tytuł" type="text">
+        <textarea id="edit-content" placeholder="Treść ogłoszenia"></textarea>
+        <button id="save-changes">Zapisz</button>
+        <button id="cancel-edit">Anuluj</button>
+    </div>
+</div>
+<script defer>
+    let user = "";
+    let userId = "";
+    let isAdmin = false;
+    let currentView = "category";
 
-                usersDiv.appendChild(element);
-            })
+    const loadUsers = async () => {
+        let data = await fetchAsync({}, "/loadUsers");
+        const usersDiv = document.getElementById("select-user");
+        //usersDiv.innerHTML = '';
+        data.forEach(e=>{
+            let element = document.createElement("div");
+            element.classList.add("user-element");
+            element.innerHTML = e.username;
+            element.userId = e.id;
+            element.status = e.banStatus;
+            element.onclick = login;
+            element.onmouseover = (e) => {
+                e.target.style.color = "red";
+                e.target.style.fontWeight = "bold";
+                e.target.style.cursor = "pointer";
+            }
+            element.onmouseout = (e) => {
+                e.target.style.color = "#00274d";
+                e.target.style.fontWeight = "normal";
+                e.target.style.cursor = "default";
+            }
+
+            usersDiv.appendChild(element);
+        })
+    }
+
+    const login = async (e) => {
+        let banned = e.target.status;
+        if(banned){
+            console.log("użytkownik zbanowany");
+            return; //nie można się zalogować na zbanowanego usera
         }
 
-        const login = async (e) => {
-            let banned = e.target.status;
-            if(banned){
-                console.log("użytkownik zbanowany");
-                return; //nie można się zalogować na zbanowanego usera
-            }
 
+        let id = e.target.userId;
 
-            let id = e.target.userId;
-
-            let reqData = {
-                "id":id
-            }
-            let data = await fetchAsync(reqData,"/login");
-
-            isAdmin = false;
-            if (data.state == "admin" || data.state == "logged") {
-                if (data.state == "admin") isAdmin = true;
-                userId = id;
-                user = e.target.innerHTML;
-                console.log("zalogowano:", user, "admin:", isAdmin, "id:", userId);
-                document.getElementById("select-user").style.display = "none";
-                document.getElementById("digital-board-header").style.display = "none";
-                document.getElementById("navigation-container").style.display = "block";
-
-                document.getElementById("edit-announcement").innerHTML = '';
-                document.getElementById("create-announcement").innerHTML = '';
-
-                await displayMyAnnouncements();
-                await displayCategories();
-            }
+        let reqData = {
+            "id":id
         }
+        let data = await fetchAsync(reqData,"/login");
 
-        const goToHome = () => {
-            document.getElementById("select-user").style.display = "block";
-            document.getElementById("digital-board-header").style.display = "block";
-            document.getElementById("navigation-container").style.display = "none";
+        isAdmin = false;
+        if (data.state == "admin" || data.state == "logged") {
+            if (data.state == "admin") isAdmin = true;
+            userId = id;
+            user = e.target.innerHTML;
+            console.log("zalogowano:", user, "admin:", isAdmin, "id:", userId);
 
-            document.getElementById("select-category").style.visibility = "hidden";
-            document.getElementById("select-announcement").style.visibility = "hidden";
-            document.getElementById("my-announcements").style.visibility = "hidden";
-            document.getElementById("edit-announcement").style.visibility = "hidden";
-            document.getElementById("create-announcement").style.visibility = "hidden";
+            document.getElementById("select-user").style.display = "none";
+            document.getElementById("digital-board-header").style.display = "none";
+            document.getElementById("navigation-container").style.display = "block";
+            document.getElementById("select-category").style.display = "flex";
 
-            user = "";
-            userId = "";
-            isAdmin = false;
-            document.getElementById("select-announcement").innerHTML = '';
-        };
+            document.getElementById("edit-announcement").innerHTML = '';
+            document.getElementById("create-announcement").innerHTML = '';
+
+            await displayCategories();
+        }
+    }
+
+    const showMyAnnouncements = async () => {
+        currentView = "myAnnouncements";
+        document.getElementById("my-announcements").style.display = "flex";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("select-announcement").innerHTML = '';
+        await displayMyAnnouncements();
+    }
+
+    const showCategories = async () => {
+        currentView = "category";
+        document.getElementById("select-category").style.display = "flex";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-announcement").innerHTML = '';
+
+        let allCategories = document.querySelectorAll('.category');
+        allCategories.forEach(category => {
+            category.style.background = "#f5f5f5";
+            category.style.fontWeight = "normal";
+        });
+    }
+
+    const goToHome = () => {
+        document.getElementById("select-user").style.display = "block";
+        document.getElementById("digital-board-header").style.display = "block";
+        document.getElementById("navigation-container").style.display = "none";
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-category").style.display = "none";
+
+        user = "";
+        userId = "";
+        isAdmin = false;
+        document.getElementById("select-announcement").innerHTML = '';
+    }
 
 
-        const createAnnouncementsElements = (data, containerId,initialHTML) => {
-            let announcementsDiv = document.getElementById(containerId);
-            announcementsDiv.style.visibility = "visible";
-            announcementsDiv.innerHTML = initialHTML;
+    const createAnnouncementsElements = (data, containerId, initialHTML) => {
+        const announcementsDiv = document.getElementById(containerId);
+        announcementsDiv.style.visibility = "visible";
+        announcementsDiv.innerHTML = "";
+        announcementsDiv.classList.add('announcement-container');
 
-            console.log(data);
-            data.forEach(e => {
-                let id = document.createElement("div");
-                id.innerText = e.id;
+        data.forEach(e => {
+            const div = document.createElement("div");
+            div.classList.add("announcement");
 
-                let title = document.createElement("div");
-                title.innerText = e.title;
+            const title = document.createElement("div");
+            title.innerText = e.title;
+            title.classList.add("title");
 
-                let content = document.createElement("div");
-                content.innerText = e.content;
+            const content = document.createElement("div");
+            content.innerText = e.content;
+            content.classList.add("content");
 
-                let owner = document.createElement("div");
-                owner.innerText = e.owner.username;
+            const owner = document.createElement("div");
+            owner.innerText = `Autor: ${e.owner.username}`;
+            owner.classList.add("owner");
 
-                let category = document.createElement("div");
-                category.innerText = e.category.name;
+            const category = document.createElement("div");
+            category.innerText = e.category.name;
+            category.classList.add("category");
 
-                let comments = document.createElement("div");
-                comments.innerHTML = "Komentarze<br>";
-                for (let i = 0; i < e.comments.length; i++) {
-                    comments.innerHTML += e.comments[i] + "<br>";
+            const comments = document.createElement("div");
+            comments.innerHTML = "Comments:<br>" + e.comments.map(c => `- ${c}`).join("<br>");
+            comments.classList.add("comments");
+
+            announcementsDiv.appendChild(div);
+
+            const commentDiv = document.createElement("div");
+            commentDiv.classList.add("comments-container");
+
+            const commentInput = document.createElement("input");
+            commentInput.placeholder = "Napisz Komentarz...";
+            commentInput.classList.add("comment-input");
+
+            const sendComment = document.createElement("div");
+            sendComment.classList.add("button");
+            sendComment.innerText = "Wyślij komentarz";
+            sendComment.onclick = async (event) => {
+                console.log(commentInput.value);
+                let data = await fetchAsync({ state: user + ":" + commentInput.value }, "/commentOnAnnouncement/" + e.id);
+                if (data != null) {
+                    if (currentView === "category") {
+                            await displayAnnouncementsByCategory(e.category.name);
+                            showConfirmation("Pomyślnie dodano komentarz!", true);
+                        } else if (currentView === "myAnnouncements") {
+                            await displayMyAnnouncements();
+                            showConfirmation("Pomyślnie dodano komentarz!", true);
+                        }
                 }
+            }
 
-                let commentDiv = document.createElement("div");
+            commentDiv.append(commentInput, sendComment);
+            div.appendChild(commentDiv);
 
-                let comment = document.createElement("input");
-                comment.placeholder = "napisz komentarz...";
+            const heart = document.createElement("div");
+            heart.style.width = "25px";
+            heart.style.height = "25px";
 
-                let sendComment = document.createElement("div");
-                sendComment.classList.add("button");
-                sendComment.innerText = "wyślij komentarz";
-                sendComment.onclick = async(event) =>{
-                    console.log(comment.value);
-                    let data = await fetchAsync({state:user+":"+comment.value},"/commentOnAnnouncement/"+e.id);
-                    if(data != null){
-                        await displayAnnouncementsByCategory(e.category.name);
-                        await displayMyAnnouncements();
-                    }
-                }
-                commentDiv.append(comment, sendComment);
+            if (containerId === "wishlist") {
+                heart.clicked = true;
+                heart.style.backgroundImage = 'url("heart.png")';
+            } else {
+                heart.clicked = false;
+                heart.style.backgroundImage = 'url("heart_off.png")';
+            }
 
-                const heart = document.createElement("div");
-                heart.style.width = "25px";
-                heart.style.height = "25px";
-
-
-                if(containerId === "wishlist"){
-                    heart.clicked = true
+            heart.style.backgroundSize = "25px";
+            heart.onclick = async (ev) => {
+                heart.clicked = !heart.clicked;
+                if (heart.clicked) {
                     heart.style.backgroundImage = 'url("heart.png")';
-                }else {
-                    heart.clicked = false;
+                } else {
                     heart.style.backgroundImage = 'url("heart_off.png")';
                 }
-
-                heart.style.backgroundSize = "25px";
-                heart.onclick = async (ev) => {
-                    heart.clicked = !heart.clicked;
-                    if (heart.clicked){
-                        heart.style.backgroundImage = 'url("heart.png")';
-                    }else {
-                        heart.style.backgroundImage = 'url("heart_off.png")';
-                    }
-                    let wishlistData = await fetchAsync({state:e.id},"/addToWishlist/"+userId);
-                    createAnnouncementsElements(wishlistData,"wishlist","Ulubione");
-                }
-
-                const div = document.createElement("div");
-                div.id = e.id;
-                div.append(id, title, content, owner, category, comments, commentDiv, heart);
-                div.classList.add("announcement");
-
-                if (isAdmin){
-                    getStats();
-                    const deleteButton = document.createElement("div");
-                    deleteButton.onclick = async ()=>{
-                        let data = await fetchAsync({},"/deleteAnnouncement/"+e.id);
-                        if (data.state === "success"){
-                            document.getElementById("edit-announcement").innerHTML = '';
-                            await displayAnnouncementsByCategory(category.innerText);
-                        }
-                    }
-                    deleteButton.innerText = "usuń";
-                    deleteButton.classList.add("button");
-
-                    const banButton = document.createElement("div");
-                    banButton.classList.add("button");
-                    banButton.innerText = "zbanuj";
-                    banButton.onclick = async() =>{
-                        let id = e.owner.id;
-                        let data = await banUser(id);
-                        if(data.state === "success"){
-                            await loadUsers();
-                        }
-                    }
-
-                    div.append(deleteButton,banButton);
-                }
-
-                announcementsDiv.appendChild(div);
-            })
-        }
-
-        const banUser = async (id) => {
-            return await fetchAsync({id:id},"/banUser");
-        }
-
-        const getStats = async ()=>{
-            const container = document.getElementById("display-stats")
-            container.innerHTML = '';
-            container.style.visibility = 'visible';
-            const button = document.createElement("div");
-            button.innerText = "statystyki";
-            button.classList.add("button");
-            button.onclick = async()=>{
-                let data = await fetchAsync({},"/viewGeneralStatistics");
-                container.innerHTML += `<div>Liczba użytkowników:${data.totalUsers}</div>
-                <div>Liczba ogłoszeń:${data.totalAnnouncements}</div>`;
-            }
-            container.appendChild(button);
-        }
-
-        const createEditionAnnouncementsElements = (data, containerId, initialHTML) => {
-            let announcementsDiv = document.getElementById(containerId);
-            announcementsDiv.style.visibility = "visible";
-            announcementsDiv.innerHTML = initialHTML;
-
-            let id = document.createElement("div");
-            id.innerText = data.id;
-
-            let title = document.createElement("textarea");
-            title.innerText = data.title;
-
-            let content = document.createElement("textarea");
-            content.innerText = data.content;
-
-            let owner = document.createElement("div");
-            owner.innerText = data.owner.username;
-
-            let category = document.createElement("div");
-            category.innerText = data.category.name;
-
-            let comments = document.createElement("div");
-            for (let i = 0; i < data.comments.length; i++) {
-                comments.innerText += data.comments[i] + "\n";
+                let wishlistData = await fetchAsync({ state: e.id }, "/addToWishlist/" + userId);
+                createAnnouncementsElements(wishlistData, "wishlist");
             }
 
-            const button = document.createElement("div");
-            button.classList.add("button");
-            button.innerText = "zapisz";
-            button.onclick = sendEdited;
+            div.append(title, content, owner, category, comments, commentDiv, heart);
 
-            const div = document.createElement("div");
-            div.id = data.id;
-            div.append(id, title, content, owner, category, comments, button);
-            div.classList.add("announcement");
+            if (isAdmin) {
+                getStats();
+                const deleteButton = document.createElement("div");
+                deleteButton.onclick = async () => {
+                    let data = await fetchAsync({}, "/deleteAnnouncement/" + e.id);
+                    if (data.state === "success") {
+                        document.getElementById("edit-announcement").innerHTML = '';
+                        await displayAnnouncementsByCategory(category.innerText);
+                    }
+                }
+                deleteButton.innerText = "usuń";
+                deleteButton.classList.add("button");
+
+                const banButton = document.createElement("div");
+                banButton.classList.add("button");
+                banButton.innerText = "zbanuj";
+                banButton.onclick = async () => {
+                    let id = e.owner.id;
+                    let data = await banUser(id);
+                    if (data.state === "success") {
+                        await loadUsers();
+                    }
+                }
+
+                div.append(deleteButton, banButton);
+            }
+
             announcementsDiv.appendChild(div);
-        }
 
-        const sendEdited = async (e) => {
-            const elements = e.target.parentElement.childNodes;
-            let data = {
-                id:elements[0].innerText,
-                title:elements[1].value,
-                content:elements[2].value,
-                owner:Object,
-                category:Object,
-                comments:Array
-            };
+            if (e.owner.username === user) {
+                const buttonsDiv = document.createElement("div");
+                buttonsDiv.classList.add("buttons-container");
 
-            console.log(data);
-            let response = await fetchAsync(data,"/editAnnouncement");
+                const deleteAnnouncement = document.createElement("div");
+                deleteAnnouncement.onclick = async () => {
+                    let data = await fetchAsync({}, `/deleteAnnouncement/${e.id}`);
+                    if (data.state === "success") {
+                        if (currentView === "category") {
+                            await displayAnnouncementsByCategory(e.category.name);
+                            showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                        } else if (currentView === "myAnnouncements") {
+                            await displayMyAnnouncements();
+                            showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                        }
+                    }
+                }
+                deleteAnnouncement.classList.add("button", "delete");
+                deleteAnnouncement.innerText = "usuń";
+                buttonsDiv.appendChild(deleteAnnouncement);
 
-            if(response.state === "success"){
-                document.getElementById("edit-announcement").innerHTML = '';
-                await displayMyAnnouncements();
+                const editAnnouncement = document.createElement("div");
+                editAnnouncement.onclick = async () => {
+                    let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
+
+                    document.getElementById('edit-title').value = announcementData.title;
+                    document.getElementById('edit-content').value = announcementData.content;
+
+                    if (!document.getElementById('modal-overlay').classList.contains('show')) {
+                        document.getElementById('modal-overlay').classList.add('show');
+                        document.getElementById('edit-modal').classList.add('show');
+                    }
+
+                    document.getElementById('save-changes').onclick = async () => {
+                        const updatedData = {
+                            id: announcementData.id,
+                            title: document.getElementById('edit-title').value,
+                            content: document.getElementById('edit-content').value
+                        }
+
+                        const response = await fetchAsync(updatedData, "/editAnnouncement");
+                        if (response.state === "success") {
+                            document.getElementById('modal-overlay').classList.remove('show');
+                            document.getElementById('edit-modal').classList.remove('show');
+                            if (currentView === "category") {
+                                await displayAnnouncementsByCategory(e.category.name);
+                                showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                                showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                            }
+                        }
+                    }
+
+                    document.getElementById('cancel-edit').onclick = () => {
+                        document.getElementById('modal-overlay').classList.remove('show');
+                        document.getElementById('edit-modal').classList.remove('show');
+                        showConfirmation("Anulowano edycje ogłoszenia!", false);
+                    }
+                }
+                editAnnouncement.classList.add("button");
+                editAnnouncement.innerText = "edytuj";
+                buttonsDiv.appendChild(editAnnouncement);
+
+
+                div.appendChild(buttonsDiv);
             }
+        })
+    }
+
+    const banUser = async (id) => {
+        return await fetchAsync({id:id},"/banUser");
+    }
+
+    const getStats = async ()=>{
+        const container = document.getElementById("display-stats")
+        container.innerHTML = '';
+        container.style.visibility = 'visible';
+        const button = document.createElement("div");
+        button.innerText = "statystyki";
+        button.classList.add("button");
+        button.onclick = async()=>{
+            let data = await fetchAsync({},"/viewGeneralStatistics");
+            container.innerHTML += `<div>Liczba użytkowników:${data.totalUsers}</div>
+            <div>Liczba ogłoszeń:${data.totalAnnouncements}</div>`;
+        }
+        container.appendChild(button);
+    }
+
+    const sendEdited = async (e) => {
+        const elements = e.target.parentElement.childNodes;
+        let data = {
+            id:elements[0].innerText,
+            title:elements[1].value,
+            content:elements[2].value,
+            owner:Object,
+            category:Object,
+            comments:Array
         }
 
-        const displayMyAnnouncements = async () => {
-            let reqData = {};
-            let data = await fetchAsync(reqData, "/fetchMyAnouncements/" + userId);
-            createAnnouncementsElements(data, "my-announcements","Moje Ogłoszenia");
+        console.log(data);
+        let response = await fetchAsync(data,"/editAnnouncement");
+
+        if(response.state === "success"){
+            document.getElementById("edit-announcement").innerHTML = '';
+            await displayMyAnnouncements();
+        }
+    }
+
+    const displayMyAnnouncements = async () => {
+        let reqData = {};
+        let data = await fetchAsync(reqData, "/fetchMyAnouncements/" + userId);
+        const announcementsContainer = document.getElementById("my-announcements");
+
+        if (data.length === 0) {
+            announcementsContainer.innerHTML = "";
+            showConfirmation("Brak dodanych ogłoszeń!", false);
+        } else {
+            createAnnouncementsElements(data, "my-announcements");
 
             const announcements = document.getElementById("my-announcements").childNodes;
-            announcements.forEach(e=>{
-                if(e.nodeName !== "#text") {
-                    const buttonsDiv = document.createElement("div");
-                    buttonsDiv.classList.add("buttons-container");
+        }
+    }
 
-                    const deleteAnnouncement = document.createElement("div");
-                    deleteAnnouncement.onclick = deleteMyAnnouncement;
-                    deleteAnnouncement.classList.add("button");
-                    deleteAnnouncement.innerText = "usuń";
-                    buttonsDiv.appendChild(deleteAnnouncement);
+    const createNewAnnouncement = async ()=> {
+        let announcementsDiv = document.getElementById("create-announcement");
+        announcementsDiv.innerHTML = "";
 
-                    const editAnnouncement = document.createElement("div");
-                    editAnnouncement.onclick = editMyAnnouncement;
-                    editAnnouncement.classList.add("button");
-                    editAnnouncement.innerText = "edytuj";
-                    buttonsDiv.appendChild(editAnnouncement);
+        announcementsDiv.style.visibility = "visible";
+        announcementsDiv.style.display = "block";
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("select-announcement").innerHTML = '';
 
-                    e.appendChild(buttonsDiv);
-                };
-            })
-            const createNewAnnouncementButton = document.createElement("div");
-            createNewAnnouncementButton.innerText = "dodaj";
-            createNewAnnouncementButton.onclick = createNewAnnouncement;
-            createNewAnnouncementButton.classList.add("button2");
+        let titleDiv = document.createElement("div");
+        titleDiv.classList.add("create-announcement-title");
+        titleDiv.innerText = "Dodaj Ogłoszenie";
 
-            const announcementListElement = document.getElementById("my-announcements");
-            announcementListElement.append(createNewAnnouncementButton);
+        let title = document.createElement("input");
+        title.placeholder = "Tytuł";
+        let content = document.createElement("textarea");
+
+        let categoriesData = await fetchAsync({}, "/browseCategories");
+        let category = document.createElement("select");
+        category.name = "categories";
+        category.id = "categories-select";
+        category.classList.add("category-select");
+
+        for(let i = 0; i < categoriesData.length; i++) {
+            let elem = document.createElement("option");
+            elem.innerHTML = categoriesData[i].name;
+            elem.value = categoriesData[i].name;
+            category.append(elem);
         }
 
-        const createNewAnnouncement = async ()=>{
-            let announcementsDiv = document.getElementById("create-announcement");
-            announcementsDiv.style.visibility = "visible";
-            announcementsDiv.innerHTML = "Dodaj Ogłoszenie";
+        content.placeholder = "Treść ogłoszenia";
+        const button = document.createElement("div");
+        button.classList.add("button");
+        button.innerText = "Dodaj";
+        button.onclick = sendCreated;
 
-            let title = document.createElement("input");
-            title.placeholder = "tytuł";
-            let content = document.createElement("textarea");
+        const div = document.createElement("div");
+        div.append(title, content, category, button);
+        div.classList.add("create-announcement");
+        announcementsDiv.appendChild(titleDiv);
+        announcementsDiv.appendChild(div);
+    }
 
-            let categoriesData = await fetchAsync({},"/browseCategories");
-            let category = document.createElement("select");
-            category.name = "categories";
-            category.id = "categories-select";
 
-            for(let i = 0; i < categoriesData.length; i++){
-                let elem = document.createElement("option");
-                elem.innerHTML = categoriesData[i].name;
-                elem.value = categoriesData[i].name;
-                category.append(elem);
-            }
+    const sendCreated = async (e) => {
+        const elements = e.target.parentElement.childNodes;
 
-            content.placeholder = "treść ogłoszenia";
-            const button = document.createElement("div");
-            button.classList.add("button");
-            button.innerText = "dodaj";
-            button.onclick = sendCreated;
+        let title = elements[0].value.trim();
+        let content = elements[1].value.trim();
+        let category = document.getElementById("categories-select").value;
 
-            const div = document.createElement("div");
-            div.append(title, content, category, button);
-            div.classList.add("create-announcement");
-            announcementsDiv.appendChild(div);
-        };
+        if (!title || !content || !category) {
+            showConfirmation("Proszę wypełnić wszystkie pola!", false);
+            return;
+        }
 
-        const sendCreated = async (e) => {
-            const elements = e.target.parentElement.childNodes;
-            let data = {
+        let data = {
+            id:1,
+            title:elements[0].value,
+            content:elements[1].value,
+            owner: {
+                username:user,
+                id:userId,
+                banStatus:false,
+                wishlist:[]
+            },
+            category:{
+                name:document.getElementById("categories-select").value,
                 id:1,
-                title:elements[0].value,
-                content:elements[1].value,
-                owner: {
-                    username:user,
-                    id:userId,
-                    banStatus:false,
-                    wishlist:[]
-                },
-                category:{
-                    name:document.getElementById("categories-select").value,
-                    id:1,
-                    description:"kategoria"
-                },
-                comments:[]
-            };
-
-            let announcement = await fetchAsync(data,"/publishAnnouncement");
-
-            if(announcement != undefined){
-                document.getElementById("create-announcement").innerHTML = '';
-                await displayMyAnnouncements();
-            }
+                description:"kategoria"
+            },
+            comments:[]
         }
 
-        const deleteMyAnnouncement = async (e)=>{
-            const announcementId = e.target.parentElement.parentElement.id; // xDDDD
-            let data = await fetchAsync({},"/deleteAnnouncement/"+announcementId);
-            if (data.state === "success"){
-                document.getElementById("edit-announcement").innerHTML = '';
-                await displayMyAnnouncements();
+        let announcement = await fetchAsync(data,"/publishAnnouncement");
+        elements[0].value = "";
+        elements[1].value = "";
+        showConfirmation("Ogłoszenie zostało pomyślnie dodane!", true);
+    }
+
+     const showConfirmation = (message, isSuccess) => {
+        const confirmationDiv = document.createElement("div");
+        confirmationDiv.classList.add("confirmation-message");
+        confirmationDiv.innerText = message;
+
+        confirmationDiv.style.position = "fixed";
+        confirmationDiv.style.top = "10px";
+        confirmationDiv.style.right = "10px";
+        confirmationDiv.style.padding = "20px 30px";
+        confirmationDiv.style.color = "white";
+        confirmationDiv.style.borderRadius = "10px";
+        confirmationDiv.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.2)";
+        confirmationDiv.style.zIndex = "1000";
+        confirmationDiv.style.fontSize = "18px";
+
+        if (isSuccess) {
+            confirmationDiv.style.backgroundColor = "#4CAF50";
+        } else {
+            confirmationDiv.style.backgroundColor = "#f44336";
+        }
+
+        document.body.appendChild(confirmationDiv);
+
+        setTimeout(() => {
+            confirmationDiv.remove();
+        }, 3000);
+    }
+
+    const deleteMyAnnouncement = async (e)=>{
+        const announcementId = e.target.parentElement.parentElement.id; // xDDDD
+        let data = await fetchAsync({},"/deleteAnnouncement/"+announcementId);
+        if (data.state === "success"){
+            document.getElementById("edit-announcement").innerHTML = '';
+            await displayMyAnnouncements();
+        }
+    }
+
+    const displayCategories = async () => {
+        let reqData = {};
+        let data = await fetchAsync(reqData, "/browseCategories");
+        const categoriesDiv = document.getElementById("select-category");
+        categoriesDiv.style.visibility = "visible";
+        categoriesDiv.innerHTML = "";
+
+        const title = document.createElement("h2");
+        title.innerText = "Kategorie Ogłoszeń:";
+        title.style.color = "#00274d";
+        title.style.marginBottom = "20px";
+        categoriesDiv.appendChild(title);
+
+        data.forEach(e => {
+            let elem = document.createElement("div");
+            elem.innerHTML = e.name;
+            elem.name = e.name;
+            elem.classList.add("category");
+
+            elem.onclick = (e) => {
+                let allCategories = document.querySelectorAll('.category');
+                allCategories.forEach(category => {
+                    category.style.background = "#f5f5f5";
+                    category.style.fontWeight = "normal";
+                });
+
+                e.target.style.background = "#9370DB";
+                e.target.style.fontWeight = "bold";
+
+                displayAnnouncements(e);
             }
-        };
-
-        const editMyAnnouncement = async (e) => {
-            const announcementId = e.target.parentElement.parentElement.id;
-            //pobranie announcementa
-            let data = await fetchAsync({},"/getAnnouncement/"+announcementId);
-            //zmiana danych
-            createEditionAnnouncementsElements(data,"edit-announcement","Edytuj Ogłoszenie");
-            //odesłanie w funkcji sendEdited
-        };
-
-        const displayCategories = async () => {
-            let reqData = {};
-            let data = await fetchAsync(reqData, "/browseCategories");
-            const categoriesDiv = document.getElementById("select-category");
-            categoriesDiv.style.visibility = "visible";
-            categoriesDiv.innerHTML = ""; // Wyczyszczenie poprzednich danych
-
-            const title = document.createElement("h2");
-            title.innerText = "Kategorie Ogłoszeń:";
-            title.style.color = "#00274d";
-            title.style.marginBottom = "20px";
-            categoriesDiv.appendChild(title);
-
-            data.forEach(e => {
-                let elem = document.createElement("div");
-                elem.innerHTML = e.name;
-                elem.name = e.name;
-                elem.onclick = displayAnnouncements;
-                elem.onmouseover = (e) => {
+            elem.onmouseover = (e) => {
+                if (e.target !== lastClickedCategory) {
                     e.target.style.background = "#9370DB";
-                    // e.target.style.fontWeight = "bold";
-                };
-                elem.onmouseout = (e) => {
-                    e.target.style.background = "#f5f5f5";
-                    // e.target.style.fontWeight = "normal";
-                };
-                categoriesDiv.appendChild(elem);
-                if(isAdmin){
-                    const removeCategory = document.createElement("div");
-                    removeCategory.classList.add("button");
-                    removeCategory.innerText = "usuń";
-                    removeCategory.onclick = async(event) => {
-                        event.stopPropagation();
-                        let respData = await fetchAsync({id:e.id},"/removeCategory");
-                        if(respData != null){
-                            await displayCategories();
-                            document.getElementById("select-announcement").innerHTML = 'Przeglądaj Ogłoszenia';
-                        }
-                    }
-                    elem.appendChild(removeCategory);
+                    e.target.style.fontWeight = "bold";
                 }
-            });
+            }
+            elem.onmouseout = (e) => {
+                if (e.target !== lastClickedCategory) {
+                    e.target.style.background = "#f5f5f5";
+                    e.target.style.fontWeight = "normal";
+                }
+            }
+            categoriesDiv.appendChild(elem);
 
             if(isAdmin){
-                const addCategory = document.createElement("div");
-                addCategory.classList.add("button");
-                addCategory.innerText = "dodaj";
-                addCategory.onclick = (e) => {
-                    addCategory.innerHTML = '';
-                    addCategory.onclick = ()=>{return;};
-                    const categoryName = document.createElement("textarea");
-                    categoryName.placeholder = "nazwa...";
-
-                    const sendNewCategory = document.createElement("div");
-                    sendNewCategory.innerText = "dodaj";
-                    sendNewCategory.onclick = async(ev)=>{
-                        let data = await fetchAsync({name:categoryName.value},"/addCategory");
-                        if(data != null){
-                            await displayCategories();
-                        }
-                    };
-
-                    e.target.append(categoryName,sendNewCategory);
+                const removeCategory = document.createElement("div");
+                removeCategory.classList.add("button");
+                removeCategory.innerText = "usuń";
+                removeCategory.onclick = async(event) => {
+                    event.stopPropagation();
+                    let respData = await fetchAsync({id:e.id},"/removeCategory");
+                    if(respData != null){
+                        await displayCategories();
+                        document.getElementById("select-announcement").innerHTML = 'Przeglądaj Ogłoszenia';
+                    }
                 }
-                categoriesDiv.appendChild(addCategory);
+                elem.appendChild(removeCategory);
             }
-        };
+        });
 
-        const displayAnnouncementsByCategory = async (categoryName) =>{
-            let reqData = {"name":categoryName};
-            let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
-            console.log(data);
-            createAnnouncementsElements(data, "select-announcement","Przeglądaj Ogłoszenia");
-        }
+        if(isAdmin){
+            const addCategory = document.createElement("div");
+            addCategory.classList.add("button");
+            addCategory.innerText = "dodaj";
+            addCategory.onclick = (e) => {
+                addCategory.innerHTML = '';
+                addCategory.onclick = ()=>{return;}
+                const categoryName = document.createElement("textarea");
+                categoryName.placeholder = "nazwa...";
 
+                const sendNewCategory = document.createElement("div");
+                sendNewCategory.innerText = "dodaj";
+                sendNewCategory.onclick = async(ev)=>{
+                    let data = await fetchAsync({name:categoryName.value},"/addCategory");
+                    if(data != null){
+                        await displayCategories();
+                    }
+                }
 
-        const displayAnnouncements = async (e) =>{
-            const categoryName = e.target.name;
-            let reqData = {"name":categoryName};
-            let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
-            createAnnouncementsElements(data, "select-announcement","Przeglądaj Ogłoszenia");
-        }
-
-        const fetchAsync = async (bodyObject, url) => {
-            const options = {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(bodyObject)
+                e.target.append(categoryName,sendNewCategory);
             }
-            let response = await fetch(url, options);
-            if (!response.ok) return response.status
-            else return await response.json() // response.json
+            categoriesDiv.appendChild(addCategory);
         }
-        loadUsers();
-    </script>
+    }
+
+    const displayAnnouncementsByCategory = async (categoryName) =>{
+        let reqData = {"name":categoryName};
+        let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
+        console.log(data);
+        createAnnouncementsElements(data, "select-announcement");
+    }
+
+
+    const displayAnnouncements = async (e) =>{
+        const categoryName = e.target.name;
+        let reqData = {"name":categoryName};
+        let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
+        createAnnouncementsElements(data, "select-announcement");
+    }
+
+    const fetchAsync = async (bodyObject, url) => {
+        const options = {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(bodyObject)
+        }
+        let response = await fetch(url, options);
+        if (!response.ok) return response.status
+        else return await response.json() // response.json
+    }
+
+    loadUsers();
+</script>
 </body>
 </html>
