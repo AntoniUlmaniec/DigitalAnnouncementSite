@@ -35,7 +35,7 @@ public class Controller {
         post("/removeCategory",(req, res) -> removeCategory(req, res));
         post("/banUser",(req, res) -> banUser(req, res));
         post("/viewGeneralStatistics",(req, res) -> viewGeneralStatistics(req, res));
-
+        post("/fetchWishlist/:userId", (req, res) -> fetchWishlist(req, res));
     }
 
     // obsługa endpointów (komunikacja strona - system)
@@ -64,14 +64,17 @@ public class Controller {
         return gson.toJson(state);
     }
 
-    static String displayUserAnnouncements(Request req, Response res){
+    static String displayUserAnnouncements(Request req, Response res) {
         Gson gson = new Gson();
         int userId = Integer.parseInt(req.params("userId"));
         ArrayList<Announcement> userAnnouncements = new ArrayList<>();
         List<Announcement> allAnnouncements = db.getAnnouncements();
-        for(int i = 0; i < allAnnouncements.size(); i++){
-            if (allAnnouncements.get(i).getOwner().getId() == userId){
-                userAnnouncements.add(allAnnouncements.get(i));
+        List<Announcement> wishlist = fetchUserWishlist(userId);
+
+        for (Announcement ann : allAnnouncements) {
+            if (ann.getOwner().getId() == userId) {
+                ann.setFavorite(wishlist.contains(ann));
+                userAnnouncements.add(ann);
             }
         }
         return gson.toJson(userAnnouncements);
@@ -103,8 +106,11 @@ public class Controller {
         ResponseStatus resp = new ResponseStatus();
 
         int announcementId = Integer.parseInt(req.params("id"));
+        Announcement announcement = findAnnouncementById(announcementId);
         List<Announcement> ann = db.getAnnouncementsInCategories().get(findAnnouncementById(announcementId).getCategory());
-        ann.remove(findAnnouncementById(announcementId));
+        ann.remove(announcement);
+        db.getWishList().forEach((user, wishlist) -> wishlist.remove(announcement));
+
         resp.state = "success";
         return gson.toJson(resp);
     }
@@ -115,26 +121,35 @@ public class Controller {
         return gson.toJson(db.getCategories());
     }
 //
-    static String browseAnnouncements(Request req, Response res){
-        Gson gson = new Gson();
-        res.type("application/json");
-        List<Category>categories = db.getCategories();
-        Category category = null;
-        for (int i = 0; i < categories.size(); i++){
-            if (categories.get(i).getName().equals(req.params("name"))){
-                category = categories.get(i);
-            }
-        }
+static String browseAnnouncements(Request req, Response res) {
+    Gson gson = new Gson();
+    res.type("application/json");
+    List<Category> categories = db.getCategories();
+    Category category = null;
+    int userId = Integer.parseInt(req.queryParams("userId"));
+    List<Announcement> wishlist = fetchUserWishlist(userId);
 
-        if (category == null) {
-            ResponseStatus state = new ResponseStatus();
-            state.state = req.params().toString();
-            return gson.toJson(state);
+    for (Category cat : categories) {
+        if (cat.getName().equals(req.params("name"))) {
+            category = cat;
+            break;
         }
-
-        List<Announcement> announcements = db.getAnnouncementsInCategories().get(category);
-        return gson.toJson(announcements); // roboczo zwraca prostego stringa
     }
+
+    if (category == null) {
+        ResponseStatus state = new ResponseStatus();
+        state.state = "Kategoria nie istnieje";
+        return gson.toJson(state);
+    }
+
+    List<Announcement> announcements = db.getAnnouncementsInCategories().get(category);
+    for (Announcement ann : announcements) {
+        ann.setFavorite(wishlist.contains(ann));
+    }
+
+    return gson.toJson(announcements);
+}
+
 
     static String addToWishlist(Request req, Response res){
         Gson gson = new Gson();
@@ -278,10 +293,10 @@ public class Controller {
 
         if (!wishlist.contains(ann)){
             wishlist.add(ann);
-            return gson.toJson(wishlist);
+        } else {
+            wishlist.remove(ann);
         }
 
-        wishlist.remove(ann);
         return gson.toJson(wishlist);
     }
 
@@ -343,6 +358,19 @@ public class Controller {
         }
         return "success";
     }
+
+    static String fetchWishlist(Request req, Response res) {
+        Gson gson = new Gson();
+        int userId = Integer.parseInt(req.params("userId"));
+        List<Announcement> wishlist = fetchUserWishlist(userId);
+
+        for (Announcement ann : wishlist) {
+            ann.setFavorite(true);
+        }
+
+        return gson.toJson(wishlist);
+    }
+
 
     static Statistics fetchStatistics (){
         return db.getStatistics();

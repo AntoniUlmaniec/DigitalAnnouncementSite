@@ -8,6 +8,7 @@ public class Announcement {
     private User owner;
     private Category category;
     private List<String> comments;
+    private boolean isFavorite;
 
     public Announcement(int id, String title, String content, User owner, Category category){
         this.id = id;
@@ -67,6 +68,14 @@ public class Announcement {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
     }
 }
 
