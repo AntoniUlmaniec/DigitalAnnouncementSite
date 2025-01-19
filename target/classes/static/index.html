@@ -396,6 +396,80 @@
             }
         }
 
+        #delete-confirm-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        #delete-confirm-modal.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #delete-confirm-modal p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #delete-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #delete-modal-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        #delete-confirm-modal button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #delete-confirm-modal button:hover {
+            background-color: #45a049;
+        }
+
+        #cancel-delete-wishlist {
+            background-color: #f44336 !important;
+        }
+
+        #cancel-delete-wishlist:hover {
+            background-color: #e53935 !important;
+        }
+
         @keyframes blink {
             0% { opacity: 1 }
             10% { opacity: 0.8 }
@@ -467,6 +541,14 @@
         <button id="save-changes">Zapisz</button>
         <button id="cancel-edit">Anuluj</button>
     </div>
+    <div id="delete-confirm-modal" class="modal">
+        <p>Czy na pewno chcesz usunąć to ogłoszenie?</p>
+        <div>
+            <button id="confirm-delete-wishlist">Usuń</button>
+            <button id="cancel-delete-wishlist">Anuluj</button>
+        </div>
+    </div>
+    <div id="delete-modal-overlay" class="modal-overlay"></div>
 </div>
 <script defer>
     let user = "";
@@ -538,6 +620,7 @@
         currentView = "myAnnouncements";
         document.getElementById("my-announcements").style.display = "flex";
         document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
         document.getElementById("create-announcement").style.display = "none";
         document.getElementById("select-announcement").innerHTML = '';
         await displayMyAnnouncements();
@@ -547,6 +630,7 @@
         currentView = "category";
         document.getElementById("select-category").style.display = "flex";
         document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
         document.getElementById("my-announcements").style.display = "none";
         document.getElementById("select-announcement").innerHTML = '';
 
@@ -557,12 +641,30 @@
         });
     }
 
+    const showMyWishList = async () => {
+        currentView = "wishlist";
+        document.getElementById("wishlist").style.display = "flex";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-announcement").innerHTML = '';
+
+        let data = await fetchAsync({}, `/fetchWishlist/${userId}`);
+        if (data.length === 0) {
+            showConfirmation("Brak ulubionych ogłoszeń!", false);
+        } else {
+            createAnnouncementsElements(data, "wishlist");
+        }
+    }
+
     const goToHome = () => {
         document.getElementById("select-user").style.display = "block";
         document.getElementById("digital-board-header").style.display = "block";
         document.getElementById("navigation-container").style.display = "none";
         document.getElementById("my-announcements").style.display = "none";
         document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
 
         user = "";
         userId = "";
@@ -618,12 +720,15 @@
                 let data = await fetchAsync({ state: user + ":" + commentInput.value }, "/commentOnAnnouncement/" + e.id);
                 if (data != null) {
                     if (currentView === "category") {
-                            await displayAnnouncementsByCategory(e.category.name);
-                            showConfirmation("Pomyślnie dodano komentarz!", true);
-                        } else if (currentView === "myAnnouncements") {
-                            await displayMyAnnouncements();
-                            showConfirmation("Pomyślnie dodano komentarz!", true);
-                        }
+                        await displayAnnouncementsByCategory(e.category.name);
+                        showConfirmation("Pomyślnie dodano komentarz!", true);
+                    } else if (currentView === "myAnnouncements") {
+                        await displayMyAnnouncements();
+                        showConfirmation("Pomyślnie dodano komentarz!", true);
+                    } else if (currentView === "wishlist") {
+                        await showMyWishList();
+                        showConfirmation("Pomyślnie dodano komentarz!", true);
+                    }
                 }
             }
 
@@ -631,27 +736,29 @@
             div.appendChild(commentDiv);
 
             const heart = document.createElement("div");
-            heart.style.width = "25px";
-            heart.style.height = "25px";
+            heart.style.width = "50px";
+            heart.style.height = "50px";
+            heart.style.backgroundSize = "cover";
 
-            if (containerId === "wishlist") {
-                heart.clicked = true;
-                heart.style.backgroundImage = 'url("heart.png")';
-            } else {
-                heart.clicked = false;
-                heart.style.backgroundImage = 'url("heart_off.png")';
-            }
+            heart.clicked = e.isFavorite;
+            heart.style.backgroundImage = heart.clicked ? 'url("heart.png")' : 'url("heart_off.png")';
 
-            heart.style.backgroundSize = "25px";
             heart.onclick = async (ev) => {
                 heart.clicked = !heart.clicked;
+                heart.style.backgroundImage = heart.clicked ? 'url("heart.png")' : 'url("heart_off.png")';
+
+                await fetchAsync({ state: e.id }, `/addToWishlist/${userId}`);
+
                 if (heart.clicked) {
-                    heart.style.backgroundImage = 'url("heart.png")';
+                    showConfirmation("Dodano ogłoszenie do ulubionych!", true);
                 } else {
-                    heart.style.backgroundImage = 'url("heart_off.png")';
+                    showConfirmation("Usunięto ogłoszenie z ulubionych!", false);
                 }
-                let wishlistData = await fetchAsync({ state: e.id }, "/addToWishlist/" + userId);
-                createAnnouncementsElements(wishlistData, "wishlist");
+
+                if (currentView === "wishlist") {
+                    let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
+                    createAnnouncementsElements(wishlistData, "wishlist");
+                }
             }
 
             div.append(title, content, owner, category, comments, commentDiv, heart);
@@ -690,18 +797,42 @@
                 buttonsDiv.classList.add("buttons-container");
 
                 const deleteAnnouncement = document.createElement("div");
-                deleteAnnouncement.onclick = async () => {
-                    let data = await fetchAsync({}, `/deleteAnnouncement/${e.id}`);
-                    if (data.state === "success") {
-                        if (currentView === "category") {
-                            await displayAnnouncementsByCategory(e.category.name);
-                            showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
-                        } else if (currentView === "myAnnouncements") {
-                            await displayMyAnnouncements();
-                            showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                deleteAnnouncement.onclick = () => {
+                    const modal = document.getElementById("delete-confirm-modal");
+                    const overlay = document.getElementById("delete-modal-overlay");
+                    modal.classList.add("show");
+                    overlay.classList.add("show");
+
+                    const confirmButton = document.getElementById("confirm-delete-wishlist");
+                    const cancelButton = document.getElementById("cancel-delete-wishlist");
+
+                    confirmButton.onclick = async () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+
+                        let data = await fetchAsync({}, `/deleteAnnouncement/${e.id}`);
+                        if (data.state === "success") {
+                            if (currentView === "category") {
+                                await displayAnnouncementsByCategory(e.category.name);
+                                showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                                showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                            } else if (currentView === "wishlist") {
+                                let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
+                                createAnnouncementsElements(wishlistData, "wishlist");
+                                showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                            }
                         }
-                    }
-                }
+                    };
+
+                    cancelButton.onclick = () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+                        showConfirmation("Anulowano usuwanie ogłoszenia!", false);
+                    };
+                };
+
                 deleteAnnouncement.classList.add("button", "delete");
                 deleteAnnouncement.innerText = "usuń";
                 buttonsDiv.appendChild(deleteAnnouncement);
@@ -734,6 +865,9 @@
                                 showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
                             } else if (currentView === "myAnnouncements") {
                                 await displayMyAnnouncements();
+                                showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                            } else if (currentView === "wishlist") {
+                                await showMyWishList();
                                 showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
                             }
                         }
@@ -817,6 +951,7 @@
         announcementsDiv.style.display = "block";
         document.getElementById("my-announcements").style.display = "none";
         document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
         document.getElementById("select-announcement").innerHTML = '';
 
         let titleDiv = document.createElement("div");
@@ -1015,7 +1150,7 @@
 
     const displayAnnouncementsByCategory = async (categoryName) =>{
         let reqData = {"name":categoryName};
-        let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
+        let data = await fetchAsync(reqData, `/browseAnnouncements/${reqData.name}?userId=${userId}`);
         console.log(data);
         createAnnouncementsElements(data, "select-announcement");
     }
@@ -1024,7 +1159,7 @@
     const displayAnnouncements = async (e) =>{
         const categoryName = e.target.name;
         let reqData = {"name":categoryName};
-        let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
+        let data = await fetchAsync({}, `/browseAnnouncements/${categoryName}?userId=${userId}`);
         createAnnouncementsElements(data, "select-announcement");
     }
 
