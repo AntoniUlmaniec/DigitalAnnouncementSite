@@ -470,6 +470,12 @@
             background-color: #e53935 !important;
         }
 
+        .user-element.banned {
+            color: gray;
+            pointer-events: none;
+            font-style: italic;
+        }
+
         @keyframes blink {
             0% { opacity: 1 }
             10% { opacity: 0.8 }
@@ -559,23 +565,38 @@
     const loadUsers = async () => {
         let data = await fetchAsync({}, "/loadUsers");
         const usersDiv = document.getElementById("select-user");
+        usersDiv.innerHTML = `<div class="select-user-header">! Wybierz Użytkownika !</div>`;
+
         data.forEach(e=>{
             let element = document.createElement("div");
             element.classList.add("user-element");
             element.innerHTML = e.username;
             element.userId = e.id;
             element.status = e.banStatus;
-            element.onclick = login;
+
+            if (e.banStatus) {
+                element.classList.add("banned");
+                element.style.color = "gray";
+                element.style.cursor = "not-allowed";
+            } else {
+                element.onclick = login;
+            }
+
             element.onmouseover = (e) => {
-                e.target.style.color = "red";
-                e.target.style.fontWeight = "bold";
-                e.target.style.cursor = "pointer";
-            }
+                if (!e.target.classList.contains("banned")) {
+                    e.target.style.color = "red";
+                    e.target.style.fontWeight = "bold";
+                    e.target.style.cursor = "pointer";
+                }
+            };
+
             element.onmouseout = (e) => {
-                e.target.style.color = "#00274d";
-                e.target.style.fontWeight = "normal";
-                e.target.style.cursor = "default";
-            }
+                if (!e.target.classList.contains("banned")) {
+                    e.target.style.color = "#00274d";
+                    e.target.style.fontWeight = "normal";
+                    e.target.style.cursor = "default";
+                }
+            };
 
             usersDiv.appendChild(element);
         })
