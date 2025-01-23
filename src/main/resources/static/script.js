@@ -316,15 +316,13 @@ const createAnnouncementsElements = (data, containerId, initialHTML) => {
                 console.log(commentInput.value);
                 let data = await fetchAsync({ state: user + ":" + commentInput.value }, "/commentOnAnnouncement/" + e.id);
                 if (data != null) {
+                    showConfirmation("Komentarz został wysłany!", true);
                     if (currentView === "category") {
                         await displayAnnouncementsByCategory(e.category.name);
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
                     } else if (currentView === "myAnnouncements") {
-                        await displayMyAnnouncements();
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
+                        await displayMyAnnouncements();\
                     } else if (currentView === "wishlist") {
                         await showMyWishList();
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
                     }
                 }
             }
