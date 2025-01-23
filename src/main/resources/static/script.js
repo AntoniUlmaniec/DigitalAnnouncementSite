@@ -408,6 +408,45 @@ const createAnnouncementsElements = (data, containerId) => {
             const editButton = document.createElement("div");
             editButton.classList.add("button");
             editButton.innerText = "Edytuj";
+            editButton.onclick = async () => {
+                let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
+
+                document.getElementById('edit-title').value = announcementData.title;
+                document.getElementById('edit-content').value = announcementData.content;
+
+                if (!document.getElementById('modal-overlay').classList.contains('show')) {
+                    document.getElementById('modal-overlay').classList.add('show');
+                    document.getElementById('edit-modal').classList.add('show');
+                }
+
+                document.getElementById('save-changes').onclick = async () => {
+                    const updatedData = {
+                        id: announcementData.id,
+                        title: document.getElementById('edit-title').value,
+                        content: document.getElementById('edit-content').value
+                    }
+
+                    const response = await fetchAsync(updatedData, "/editAnnouncement");
+                    if (response.state === "success") {
+                        document.getElementById('modal-overlay').classList.remove('show');
+                        document.getElementById('edit-modal').classList.remove('show');
+                        showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                        if (currentView === "category") {
+                            await displayAnnouncementsByCategory(e.category.name);
+                        } else if (currentView === "myAnnouncements") {
+                            await displayMyAnnouncements();
+                        } else if (currentView === "wishlist") {
+                            await showMyWishList();
+                        }
+                    }
+                }
+
+                document.getElementById('cancel-edit').onclick = () => {
+                    document.getElementById('modal-overlay').classList.remove('show');
+                    document.getElementById('edit-modal').classList.remove('show');
+                    showConfirmation("Anulowano edycję ogłoszenia!", false);
+                }
+            }
 
             // Przycisk zbanuj
             const banButton = document.createElement("div");
