@@ -476,6 +476,75 @@
             font-style: italic;
         }
 
+        .button.ban {
+            background-color: #13acbd;
+            color: white;
+        }
+
+        .button.ban:hover {
+            background-color: #1095a3;
+        }
+
+        .user-div {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .user-div:hover {
+            background-color: #eaeaea;
+            transform: scale(1.02);
+        }
+
+        .user-info {
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+
+        .unban-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .unban-button:hover {
+            background-color: #45a049;
+        }
+
+        #no-announcements {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #no-announcements-message {
+            font-size: 30px;
+            color: #FF0000;
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+
         @keyframes blink {
             0% { opacity: 1 }
             10% { opacity: 0.8 }
@@ -520,16 +589,12 @@
     </div>
     <div id="navigation-container">
         <button onclick="goToHome()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Home</button>
-        <button onclick="showCategories()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Kategorie
-        </button>
-        <button onclick="createNewAnnouncement()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Dodaj
-            Ogłoszenie
-        </button>
-        <button onclick="showMyAnnouncements()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Moje
-            Ogłoszenia
-        </button>
-        <button onclick="showMyWishList()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Ulubione
-        </button>
+        <button onclick="showCategories()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Kategorie</button>
+        <button onclick="createNewAnnouncement()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Dodaj Ogłoszenie</button>
+        <button onclick="showMyAnnouncements()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Moje Ogłoszenia</button>
+        <button onclick="showMyWishList()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Ulubione</button>
+        <button id="stats-button" onclick="showStats()" style="padding: 10px 20px; font-size: 16px; cursor: pointer; display: none;">Statystyki</button>
+        <button id="banned-button" onclick="showBannedUsers()" style="padding: 10px 20px; font-size: 16px; cursor: pointer; display: none;">Zbanowani</button>
     </div>
     <div id="select-category" class="select-category"></div>
     <div id="select-announcement" class="select-announcement"></div>
@@ -555,12 +620,14 @@
         </div>
     </div>
     <div id="delete-modal-overlay" class="modal-overlay"></div>
+    <div id="no-announcements" style="display: none;"></div>
 </div>
 <script defer>
     let user = "";
     let userId = "";
     let isAdmin = false;
     let currentView = "category";
+    let lastClickedCategory = null;
 
     const loadUsers = async () => {
         let data = await fetchAsync({}, "/loadUsers");
@@ -573,14 +640,7 @@
             element.innerHTML = e.username;
             element.userId = e.id;
             element.status = e.banStatus;
-
-            if (e.banStatus) {
-                element.classList.add("banned");
-                element.style.color = "gray";
-                element.style.cursor = "not-allowed";
-            } else {
-                element.onclick = login;
-            }
+            element.onclick = login;
 
             element.onmouseover = (e) => {
                 if (!e.target.classList.contains("banned")) {
@@ -588,7 +648,7 @@
                     e.target.style.fontWeight = "bold";
                     e.target.style.cursor = "pointer";
                 }
-            };
+            }
 
             element.onmouseout = (e) => {
                 if (!e.target.classList.contains("banned")) {
@@ -596,10 +656,10 @@
                     e.target.style.fontWeight = "normal";
                     e.target.style.cursor = "default";
                 }
-            };
+            }
 
             usersDiv.appendChild(element);
-        })
+        });
     }
 
     const login = async (e) => {
@@ -632,8 +692,136 @@
             document.getElementById("edit-announcement").innerHTML = '';
             document.getElementById("create-announcement").innerHTML = '';
 
+            if (isAdmin) {
+                document.getElementById("navigation-container").style.width = "60%";
+                document.getElementById("stats-button").style.display = "inline-block";
+                document.getElementById("banned-button").style.display = "inline-block";
+            } else {
+                document.getElementById("navigation-container").style.width = "50%";
+                document.getElementById("stats-button").style.display = "none";
+                document.getElementById("banned-button").style.display = "none";
+            }
+
             await displayCategories();
         }
+    }
+
+    const showBannedUsers = async () => {
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+        document.getElementById("select-announcement").innerHTML = '';
+
+        const container = document.getElementById("display-stats");
+        container.innerHTML = '';
+        container.style.visibility = 'visible';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+
+        const bannedUsers = await fetchAsync({}, "/fetchBannedUsers");
+
+        if (bannedUsers.length === 0) {
+            const message = document.createElement("div");
+            message.innerText = "Brak zbanowanych użytkowników.";
+            message.style.textAlign = "center";
+            message.style.color = "#555";
+            container.appendChild(message);
+            showConfirmation("Brak zbanowanych użytkowników!", false);
+            return;
+        }
+
+        bannedUsers.forEach(user => {
+            const userDiv = document.createElement("div");
+            userDiv.classList.add("user-div");
+
+            const userInfo = document.createElement("div");
+            userInfo.classList.add("user-info");
+            userInfo.innerText = `Użytkownik: ${user.username}`;
+
+            const unbanButton = document.createElement("button");
+            unbanButton.classList.add("unban-button");
+            unbanButton.innerText = "Odbanuj";
+
+            unbanButton.onclick = async () => {
+                const response = await fetchAsync({ id: user.id }, "/unbanUser");
+                if (response.state === "success") {
+                    showConfirmation(`Użytkownik ${user.username} został odbanowany!`, true);
+                    await loadUsers();
+                    await showBannedUsers();
+                }
+            }
+
+            userDiv.appendChild(userInfo);
+            userDiv.appendChild(unbanButton);
+            container.appendChild(userDiv);
+        });
+    }
+
+
+    const showStats = async () => {
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+        document.getElementById("select-announcement").innerHTML = '';
+
+        const container = document.getElementById("display-stats");
+        container.innerHTML = '';
+        container.style.visibility = 'visible';
+        container.style.display = "flex";
+        container.style.flexDirection = "column";
+
+        const statsData = await fetchAsync({}, "/viewGeneralStatistics");
+
+        const header = document.createElement("h2");
+        header.innerText = "Statystyki Systemu";
+        header.style.textAlign = "center";
+        header.style.color = "white";
+        header.style.backgroundColor = "#00274d";
+        header.style.padding = "15px";
+        header.style.borderRadius = "10px";
+        header.style.margin = "0 auto 20px auto";
+        header.style.display = "inline-block";
+        container.appendChild(header);
+
+        const table = document.createElement("table");
+        table.style.width = "100%";
+        table.style.maxWidth = "600px";
+        table.style.margin = "0 auto";
+        table.style.borderCollapse = "collapse";
+        table.style.backgroundColor = "#00274d";
+        table.style.color = "white";
+        table.style.borderRadius = "10px";
+        table.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+
+        const thead = document.createElement("thead");
+        thead.innerHTML = `
+            <tr style="font-size: 18px;">
+                <th style="padding: 10px; border: 1px solid white;">Kategoria</th>
+                <th style="padding: 10px; border: 1px solid white;">Wartość</th>
+            </tr>`;
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        tbody.innerHTML = `
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba użytkowników</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.totalUsers}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba zbanowanych użytkowników</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.bannedUsers}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba ogłoszeń</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.totalAnnouncements}</td>
+            </tr>`;
+        table.appendChild(tbody);
+
+        container.appendChild(table);
     }
 
     const showMyAnnouncements = async () => {
@@ -642,6 +830,8 @@
         document.getElementById("select-category").style.display = "none";
         document.getElementById("wishlist").style.display = "none";
         document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
         document.getElementById("select-announcement").innerHTML = '';
         await displayMyAnnouncements();
     }
@@ -652,13 +842,11 @@
         document.getElementById("create-announcement").style.display = "none";
         document.getElementById("wishlist").style.display = "none";
         document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
         document.getElementById("select-announcement").innerHTML = '';
 
-        let allCategories = document.querySelectorAll('.category');
-        allCategories.forEach(category => {
-            category.style.background = "#f5f5f5";
-            category.style.fontWeight = "normal";
-        });
+        await displayCategories();
     }
 
     const showMyWishList = async () => {
@@ -667,13 +855,19 @@
         document.getElementById("select-category").style.display = "none";
         document.getElementById("create-announcement").style.display = "none";
         document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
         document.getElementById("select-announcement").innerHTML = '';
 
         let data = await fetchAsync({}, `/fetchWishlist/${userId}`);
+
         if (data.length === 0) {
             showConfirmation("Brak ulubionych ogłoszeń!", false);
+            showNoAnnouncementsMessage('no-announcements');
+            return;
         } else {
             createAnnouncementsElements(data, "wishlist");
+            document.getElementById("no-announcements").style.display = 'none';
         }
     }
 
@@ -685,6 +879,8 @@
         document.getElementById("select-category").style.display = "none";
         document.getElementById("wishlist").style.display = "none";
         document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
 
         user = "";
         userId = "";
@@ -736,18 +932,23 @@
             sendComment.classList.add("button");
             sendComment.innerText = "Wyślij komentarz";
             sendComment.onclick = async (event) => {
-                console.log(commentInput.value);
-                let data = await fetchAsync({ state: user + ":" + commentInput.value }, "/commentOnAnnouncement/" + e.id);
-                if (data != null) {
-                    if (currentView === "category") {
-                        await displayAnnouncementsByCategory(e.category.name);
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
-                    } else if (currentView === "myAnnouncements") {
-                        await displayMyAnnouncements();
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
-                    } else if (currentView === "wishlist") {
-                        await showMyWishList();
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
+                if (commentInput.value.trim() === "") {
+                    showConfirmation("Proszę uzupełnić treść komentarza!", false);
+                    return;
+                } else {
+                    console.log(commentInput.value);
+                    let data = await fetchAsync({ state: user + ":" + commentInput.value }, "/commentOnAnnouncement/" + e.id);
+                    if (data != null) {
+                        if (currentView === "category") {
+                            await displayAnnouncementsByCategory(e.category.name);
+                            showConfirmation("Pomyślnie dodano komentarz!", true);
+                        } else if (currentView === "myAnnouncements") {
+                            await displayMyAnnouncements();
+                            showConfirmation("Pomyślnie dodano komentarz!", true);
+                        } else if (currentView === "wishlist") {
+                            await showMyWishList();
+                            showConfirmation("Pomyślnie dodano komentarz!", true);
+                        }
                     }
                 }
             }
@@ -783,31 +984,145 @@
 
             div.append(title, content, owner, category, comments, commentDiv, heart);
 
-            if (isAdmin) {
-                getStats();
+            if (isAdmin && e.owner.username !== user) {
+                // Przycisk usuń
                 const deleteButton = document.createElement("div");
+                deleteButton.classList.add("button", "delete");
+                deleteButton.innerText = "Usuń";
                 deleteButton.onclick = async () => {
-                    let data = await fetchAsync({}, "/deleteAnnouncement/" + e.id);
-                    if (data.state === "success") {
-                        document.getElementById("edit-announcement").innerHTML = '';
-                        await displayAnnouncementsByCategory(category.innerText);
+                    event.stopPropagation();
+
+                    const modal = document.getElementById("delete-confirm-modal");
+                    const overlay = document.getElementById("delete-modal-overlay");
+                    modal.classList.add("show");
+                    overlay.classList.add("show");
+
+                    const modalText = modal.querySelector("p");
+                    modalText.innerText = "Czy na pewno chcesz usunąć to ogłoszenie?";
+
+                    const confirmButton = document.getElementById("confirm-delete-wishlist");
+                    const cancelButton = document.getElementById("cancel-delete-wishlist");
+                    confirmButton.innerText = "Usuń";
+
+                    confirmButton.onclick = async () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+
+                        let data = await fetchAsync({}, "/deleteAnnouncement/" + e.id);
+                        if (data.state === "success") {
+                            showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                            if (currentView === "category") {
+                                await displayAnnouncementsByCategory(e.category.name);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                            } else if (currentView === "wishlist") {
+                                let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
+                                createAnnouncementsElements(wishlistData, "wishlist");
+                            }
+                        }
+                    }
+
+                    cancelButton.onclick = () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+                        showConfirmation("Anulowano usuwanie ogłoszenia!", false);
                     }
                 }
-                deleteButton.innerText = "usuń";
-                deleteButton.classList.add("button");
 
+                // Przycisk edytuj
+                const editButton = document.createElement("div");
+                editButton.classList.add("button");
+                editButton.innerText = "Edytuj";
+                editButton.onclick = async () => {
+                    let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
+
+                    document.getElementById('edit-title').value = announcementData.title;
+                    document.getElementById('edit-content').value = announcementData.content;
+
+                    if (!document.getElementById('modal-overlay').classList.contains('show')) {
+                        document.getElementById('modal-overlay').classList.add('show');
+                        document.getElementById('edit-modal').classList.add('show');
+                    }
+
+                    document.getElementById('save-changes').onclick = async () => {
+                        const updatedData = {
+                            id: announcementData.id,
+                            title: document.getElementById('edit-title').value,
+                            content: document.getElementById('edit-content').value
+                        }
+
+                        const response = await fetchAsync(updatedData, "/editAnnouncement");
+                        if (response.state === "success") {
+                            document.getElementById('modal-overlay').classList.remove('show');
+                            document.getElementById('edit-modal').classList.remove('show');
+                            showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                            if (currentView === "category") {
+                                await displayAnnouncementsByCategory(e.category.name);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                            } else if (currentView === "wishlist") {
+                                await showMyWishList();
+                            }
+                        }
+                    }
+
+                    document.getElementById('cancel-edit').onclick = () => {
+                        document.getElementById('modal-overlay').classList.remove('show');
+                        document.getElementById('edit-modal').classList.remove('show');
+                        showConfirmation("Anulowano edycję ogłoszenia!", false);
+                    }
+                }
+
+                // Przycisk zbanuj
                 const banButton = document.createElement("div");
-                banButton.classList.add("button");
-                banButton.innerText = "zbanuj";
+                banButton.classList.add("button", "ban");
+                banButton.innerText = "Zbanuj";
                 banButton.onclick = async () => {
-                    let id = e.owner.id;
-                    let data = await banUser(id);
-                    if (data.state === "success") {
-                        await loadUsers();
+                    event.stopPropagation();
+                    const username = e.owner.username;
+
+                    const modal = document.getElementById("delete-confirm-modal");
+                    const overlay = document.getElementById("delete-modal-overlay");
+
+                    modal.classList.add("show");
+                    overlay.classList.add("show");
+
+                    const modalText = modal.querySelector("p");
+                    modalText.innerText = `Czy na pewno chcesz zbanować użytkownika: ${username}?`;
+
+                    const confirmButton = document.getElementById("confirm-delete-wishlist");
+                    const cancelButton = document.getElementById("cancel-delete-wishlist");
+                    confirmButton.innerText = "Zbanuj";
+
+                    confirmButton.onclick = async () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+
+                        const response = await fetchAsync({ id: e.owner.id }, "/banUser");
+
+                        if (response.state === "success") {
+                            showConfirmation(`Użytkownik ${e.owner.username} został zbanowany!`, true);
+
+                            if (currentView === "category" && lastClickedCategory) {
+                                await displayAnnouncementsByCategory(lastClickedCategory.name);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                            } else if (currentView === "wishlist") {
+                                await showMyWishList();
+                            }
+
+                            await loadUsers();
+                        }
+                    }
+
+                    cancelButton.onclick = () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+                        showConfirmation("Anulowano banowanie użytkownika!", false);
                     }
                 }
 
-                div.append(deleteButton, banButton);
+                div.append(deleteButton, editButton, banButton);
             }
 
             announcementsDiv.appendChild(div);
@@ -818,13 +1133,19 @@
 
                 const deleteAnnouncement = document.createElement("div");
                 deleteAnnouncement.onclick = () => {
+                    event.stopPropagation();
+
                     const modal = document.getElementById("delete-confirm-modal");
                     const overlay = document.getElementById("delete-modal-overlay");
                     modal.classList.add("show");
                     overlay.classList.add("show");
 
+                    const modalText = modal.querySelector("p");
+                    modalText.innerText = "Czy na pewno chcesz usunąć to ogłoszenie?";
+
                     const confirmButton = document.getElementById("confirm-delete-wishlist");
                     const cancelButton = document.getElementById("cancel-delete-wishlist");
+                    confirmButton.innerText = "Usuń";
 
                     confirmButton.onclick = async () => {
                         modal.classList.remove("show");
@@ -832,16 +1153,14 @@
 
                         let data = await fetchAsync({}, `/deleteAnnouncement/${e.id}`);
                         if (data.state === "success") {
+                            showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
                             if (currentView === "category") {
                                 await displayAnnouncementsByCategory(e.category.name);
-                                showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
                             } else if (currentView === "myAnnouncements") {
                                 await displayMyAnnouncements();
-                                showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
                             } else if (currentView === "wishlist") {
                                 let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
                                 createAnnouncementsElements(wishlistData, "wishlist");
-                                showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
                             }
                         }
                     }
@@ -880,15 +1199,13 @@
                         if (response.state === "success") {
                             document.getElementById('modal-overlay').classList.remove('show');
                             document.getElementById('edit-modal').classList.remove('show');
+                            showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
                             if (currentView === "category") {
                                 await displayAnnouncementsByCategory(e.category.name);
-                                showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
                             } else if (currentView === "myAnnouncements") {
                                 await displayMyAnnouncements();
-                                showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
                             } else if (currentView === "wishlist") {
                                 await showMyWishList();
-                                showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
                             }
                         }
                     }
@@ -906,26 +1223,11 @@
 
                 div.appendChild(buttonsDiv);
             }
-        })
+        });
     }
 
     const banUser = async (id) => {
         return await fetchAsync({id:id},"/banUser");
-    }
-
-    const getStats = async ()=>{
-        const container = document.getElementById("display-stats")
-        container.innerHTML = '';
-        container.style.visibility = 'visible';
-        const button = document.createElement("div");
-        button.innerText = "statystyki";
-        button.classList.add("button");
-        button.onclick = async()=>{
-            let data = await fetchAsync({},"/viewGeneralStatistics");
-            container.innerHTML += `<div>Liczba użytkowników:${data.totalUsers}</div>
-            <div>Liczba ogłoszeń:${data.totalAnnouncements}</div>`;
-        }
-        container.appendChild(button);
     }
 
     const sendEdited = async (e) => {
@@ -956,10 +1258,11 @@
         if (data.length === 0) {
             announcementsContainer.innerHTML = "";
             showConfirmation("Brak dodanych ogłoszeń!", false);
+            showNoAnnouncementsMessage('no-announcements');
+            return;
         } else {
             createAnnouncementsElements(data, "my-announcements");
-
-            const announcements = document.getElementById("my-announcements").childNodes;
+            document.getElementById("no-announcements").style.display = 'none';
         }
     }
 
@@ -972,6 +1275,8 @@
         document.getElementById("my-announcements").style.display = "none";
         document.getElementById("select-category").style.display = "none";
         document.getElementById("wishlist").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
         document.getElementById("select-announcement").innerHTML = '';
 
         let titleDiv = document.createElement("div");
@@ -1107,6 +1412,7 @@
                     category.style.background = "#f5f5f5";
                     category.style.fontWeight = "normal";
                 });
+                lastClickedCategory = e.target;
 
                 e.target.style.background = "#9370DB";
                 e.target.style.fontWeight = "bold";
@@ -1114,15 +1420,20 @@
                 displayAnnouncements(e);
             }
             elem.onmouseover = (e) => {
-                if (e.target !== lastClickedCategory) {
-                    e.target.style.background = "#9370DB";
-                    e.target.style.fontWeight = "bold";
+                if (e.target === elem) {
+                    if (e.target !== lastClickedCategory || lastClickedCategory === null) {
+                        e.target.style.background = "#9370DB";
+                        e.target.style.fontWeight = "bold";
+                    }
                 }
             }
+
             elem.onmouseout = (e) => {
-                if (e.target !== lastClickedCategory) {
-                    e.target.style.background = "#f5f5f5";
-                    e.target.style.fontWeight = "normal";
+                if (e.target === elem) { // Sprawdza, czy zdarzenie pochodzi bezpośrednio z elementu kategorii
+                    if (e.target !== lastClickedCategory || lastClickedCategory === null) {
+                        e.target.style.background = "#f5f5f5";
+                        e.target.style.fontWeight = "normal";
+                    }
                 }
             }
             categoriesDiv.appendChild(elem);
@@ -1131,39 +1442,116 @@
                 const removeCategory = document.createElement("div");
                 removeCategory.classList.add("button");
                 removeCategory.innerText = "usuń";
-                removeCategory.onclick = async(event) => {
+                removeCategory.style.backgroundColor = "red";
+                removeCategory.style.color = "white";
+
+                removeCategory.onmouseover = () => {
+                    removeCategory.style.backgroundColor = "#b22222";
+                }
+
+                removeCategory.onmouseout = () => {
+                    removeCategory.style.backgroundColor = "red";
+                }
+
+                removeCategory.onclick = (event) => {
                     event.stopPropagation();
-                    let respData = await fetchAsync({id:e.id},"/removeCategory");
-                    if(respData != null){
-                        await displayCategories();
-                        document.getElementById("select-announcement").innerHTML = 'Przeglądaj Ogłoszenia';
+                    const categoryName = e.name;
+
+                    const modal = document.getElementById("delete-confirm-modal");
+                    const overlay = document.getElementById("delete-modal-overlay");
+                    modal.classList.add("show");
+                    overlay.classList.add("show");
+
+                    const modalText = modal.querySelector("p");
+                    modalText.innerText = `Czy na pewno chcesz usunąć kategorie "${e.name}"?`;
+
+                    const confirmButton = document.getElementById("confirm-delete-wishlist");
+                    const cancelButton = document.getElementById("cancel-delete-wishlist");
+
+                    confirmButton.onclick = async () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+
+                        let respData = await fetchAsync({ id: e.id }, "/removeCategory");
+                        if (respData != null) {
+                            await displayCategories();
+                            showConfirmation(`Usunięto kategorie "${categoryName}"!`, true);
+                        }
+                    }
+
+                    cancelButton.onclick = () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+                        showConfirmation("Anulowano usuwanie kategorii!", false);
                     }
                 }
                 elem.appendChild(removeCategory);
             }
         });
 
-        if(isAdmin){
+        if (isAdmin) {
             const addCategory = document.createElement("div");
             addCategory.classList.add("button");
-            addCategory.innerText = "dodaj";
-            addCategory.onclick = (e) => {
-                addCategory.innerHTML = '';
-                addCategory.onclick = ()=>{return;}
-                const categoryName = document.createElement("textarea");
-                categoryName.placeholder = "nazwa...";
+            addCategory.innerText = "Dodaj Kategorie";
+            addCategory.style.backgroundColor = "green";
+            addCategory.style.color = "white";
 
-                const sendNewCategory = document.createElement("div");
-                sendNewCategory.innerText = "dodaj";
-                sendNewCategory.onclick = async(ev)=>{
-                    let data = await fetchAsync({name:categoryName.value},"/addCategory");
-                    if(data != null){
-                        await displayCategories();
-                    }
-                }
-
-                e.target.append(categoryName,sendNewCategory);
+            addCategory.onmouseover = () => {
+                addCategory.style.backgroundColor = "#2e8b57";
             }
+
+            addCategory.onmouseout = () => {
+                addCategory.style.backgroundColor = "green";
+            }
+
+            const setupAddCategory = () => {
+                addCategory.innerHTML = "Dodaj Kategorie";
+                addCategory.onclick = (e) => {
+                    addCategory.innerHTML = '';
+                    addCategory.onclick = () => { return; }
+
+                    const categoryName = document.createElement("textarea");
+                    categoryName.placeholder = "Nazwa...";
+
+                    const sendNewCategory = document.createElement("div");
+                    sendNewCategory.innerText = "potwierdź";
+                    sendNewCategory.style.backgroundColor = "green";
+                    sendNewCategory.style.color = "white";
+
+                    sendNewCategory.onmouseover = () => {
+                        sendNewCategory.style.backgroundColor = "#2e8b57";
+                    }
+
+                    sendNewCategory.onmouseout = () => {
+                        sendNewCategory.style.backgroundColor = "green";
+                    }
+
+                    sendNewCategory.onclick = async (ev) => {
+                        const category = categoryName.value.trim();
+                        if (!categoryName.value.trim()) {
+                            showConfirmation("Proszę wpisać nazwę kategorii!", false);
+                            return;
+                        }
+                        let data = await fetchAsync({ name: categoryName.value.trim() }, "/addCategory");
+                        if (data != null) {
+                            await displayCategories();
+                            showConfirmation(`Dodano kategorię: "${category}"!`, true);
+                        }
+                    }
+                    e.target.append(categoryName, sendNewCategory);
+
+                    const handleOutsideClick = (event) => {
+                        if (!e.target.contains(event.target)) {
+                            document.removeEventListener("click", handleOutsideClick);
+                            setupAddCategory();
+                        }
+                    }
+
+                    document.addEventListener("click", handleOutsideClick);
+                }
+            }
+
+            setupAddCategory();
             categoriesDiv.appendChild(addCategory);
         }
     }
@@ -1172,7 +1560,13 @@
         let reqData = {"name":categoryName};
         let data = await fetchAsync(reqData, `/browseAnnouncements/${reqData.name}?userId=${userId}`);
         console.log(data);
-        createAnnouncementsElements(data, "select-announcement");
+        if (data.length === 0) {
+            showNoAnnouncementsMessage("select-announcement");
+            return;
+        } else {
+            createAnnouncementsElements(data, "select-announcement");
+            document.getElementById("no-announcements").style.display = 'none';
+        }
     }
 
 
@@ -1180,7 +1574,27 @@
         const categoryName = e.target.name;
         let reqData = {"name":categoryName};
         let data = await fetchAsync({}, `/browseAnnouncements/${categoryName}?userId=${userId}`);
-        createAnnouncementsElements(data, "select-announcement");
+        if (data.length === 0) {
+            showNoAnnouncementsMessage("select-announcement");
+            return;
+        } else {
+            createAnnouncementsElements(data, "select-announcement");
+            document.getElementById("no-announcements").style.display = 'none';
+        }
+    }
+
+    const showNoAnnouncementsMessage = (containerId) => {
+        const noAnnouncementsMessage = document.createElement('div');
+        noAnnouncementsMessage.id = 'no-announcements-message';
+        noAnnouncementsMessage.innerHTML = "Brak ogłoszeń!";
+
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.innerHTML = '';
+
+            container.appendChild(noAnnouncementsMessage);
+            container.style.display = 'flex';
+        }
     }
 
     const fetchAsync = async (bodyObject, url) => {
