@@ -1,11 +1,11 @@
 public class Statistics {
     private int totalUsers;
     private int totalAnnouncements;
-    private int activeUsers;
+    private int bannedUsers;
 
-    public Statistics(int totalUsers, int totalAnnouncements, int activeUsers){
+    public Statistics(int totalUsers, int bannedUsers, int totalAnnouncements) {
         this.totalUsers = totalUsers;
-        this.activeUsers = activeUsers;
+        this.bannedUsers = bannedUsers;
         this.totalAnnouncements = totalAnnouncements;
     }
 
@@ -17,11 +17,11 @@ public class Statistics {
         return totalAnnouncements;
     }
 
-    public int getActiveUsers() {
-        return activeUsers;
+    public int getBannedUsers() {
+        return bannedUsers;
     }
 
     public String toString() {
-        return "Wszyscy użytkownicy: " + totalUsers + ", Wszystkie ogłoszenia: " + totalAnnouncements + ", Aktywni użytkownicy: " + activeUsers;
+        return "Wszyscy użytkownicy: " + totalUsers + ", Zbanowani użytkownicy: " + bannedUsers + ", Wszystkie ogłoszenia: " + totalAnnouncements;
     }
 }
