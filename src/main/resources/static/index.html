@@ -42,10 +42,9 @@
 
         .select-announcement {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #123456;
+            background: #66cdaa;
             color: white;
             visibility: hidden;
         }
@@ -55,8 +54,62 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #ffffff;
-            color: black;
+            background: #f9f9f9;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .create-announcement-title {
+            font-size: 50px;
+            font-weight: bold;
+            color: #00274d;
+            background: #7FFFD4;
+            text-align: center;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            width: 40%;
+            border-radius: 10px;
+        }
+
+        .create-announcement input,
+        .create-announcement textarea,
+        .create-announcement select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .create-announcement textarea {
+            height: 150px;
+            resize: none;
+        }
+
+        .create-announcement .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .create-announcement .button:hover {
+            background-color: #45a049;
+        }
+
+        .create-announcement .category-select {
+            width: 100%;
+            margin-bottom: 10px;
         }
 
         .select-category {
@@ -83,9 +136,94 @@
         }
 
         .announcement {
-            background: #ffffff;
-            color: black;
-            margin: 10px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            color: #333;
+            margin: 15px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .announcement:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .announcement .title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #0073e6;
+            margin-bottom: 15px;
+        }
+
+        .announcement .content {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .announcement .owner {
+            font-size: 1em;
+            color: #999;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .announcement .category {
+            display: inline-block;
+            font-size: 0.9em;
+            color: white;
+            background: #66cdaa;
+            padding: 7px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .announcement .comments {
+            font-size: 1em;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        .announcement .button {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1em;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .announcement .button:hover {
+            background: #45a049;
+        }
+
+        .announcement-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            margin: 20px auto;
+            max-width: 90%;
+        }
+
+        .announcement-container > .announcement {
+            flex: 1 1 calc(48% - 20px);
+            max-width: 800px;
+        }
+
+         .category-header {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: #00274d;
         }
 
         .buttons-container{
@@ -105,6 +243,15 @@
             justify-content: center;
             align-items: center;
             color: white;
+        }
+
+        .button.delete {
+            background-color: red;
+            color: white;
+        }
+
+        .button.delete:hover {
+            background-color: #bd0823;
         }
 
          .button:hover{
@@ -128,6 +275,275 @@
             color: black;
         }
 
+        .comments-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .comments-container input {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: auto;
+            height: 42px;
+            box-sizing: border-box;
+            margin-right: 10px;
+        }
+
+        .comments-container .button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            height: 42px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            max-width: 600px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .modal.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        #save-changes {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        #save-changes:hover {
+            background-color: #45a049;
+        }
+
+        #cancel-edit {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        #cancel-edit:hover {
+            background-color: #e53935;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        #edit-title, #edit-content {
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                width: 80%;
+                padding: 20px;
+            }
+        }
+
+        #delete-confirm-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        #delete-confirm-modal.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #delete-confirm-modal p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #delete-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #delete-modal-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        #delete-confirm-modal button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #delete-confirm-modal button:hover {
+            background-color: #45a049;
+        }
+
+        #cancel-delete-wishlist {
+            background-color: #f44336 !important;
+        }
+
+        #cancel-delete-wishlist:hover {
+            background-color: #e53935 !important;
+        }
+
+        .user-element.banned {
+            color: gray;
+            pointer-events: none;
+            font-style: italic;
+        }
+
+        .button.ban {
+            background-color: #13acbd;
+            color: white;
+        }
+
+        .button.ban:hover {
+            background-color: #1095a3;
+        }
+
+        .user-div {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .user-div:hover {
+            background-color: #eaeaea;
+            transform: scale(1.02);
+        }
+
+        .user-info {
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+
+        .unban-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .unban-button:hover {
+            background-color: #45a049;
+        }
+
+        #no-announcements {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #no-announcements-message {
+            font-size: 30px;
+            color: #FF0000;
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
 
         @keyframes blink {
             0% { opacity: 1 }
@@ -151,497 +567,1048 @@
             color: #00274d;
             background-color: #f5f5f5;
         }
+
+        #navigation-container {
+            display: none;
+            width: 50%;
+            text-align: center;
+            margin: 20px auto;
+            padding: 10px;
+            background: #7FFFD4;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
     </style>
 </head>
 <body>
-    <div class="main">
-        <div id="digital-board-header">Cyfrowa Tablica Ogłoszeń</div>
-        <div id="select-user" class="select-user-container">
-            <div class="select-user-header">! Wybierz Użytkownika !</div>
-        </div>
-        <div id="home-button" style="display: none; text-align: center; margin: 10px;">
-            <button onclick="goToHome()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Home</button>
-        </div>
-        <div id="select-category" class="select-category">Przeglądaj Kategorie</div>
-        <div id="select-announcement" class="select-announcement">Przeglądaj ogłoszenia</div>
-        <div id="my-announcements" class="select-announcement">Moje Ogłoszenia</div>
-        <div id="edit-announcement" class="select-announcement"></div>
-        <div id="create-announcement" class="select-announcement"></div>
-        <div id="wishlist" class="select-announcement"></div>
-        <div id="display-stats" class="select-announcement"></div>
+<div class="main">
+    <div id="digital-board-header">Cyfrowa Tablica Ogłoszeń</div>
+    <div id="select-user" class="select-user-container">
+        <div class="select-user-header">! Wybierz Użytkownika !</div>
     </div>
-    <script defer>
-        let user = "";
-        let userId = "";
-        let isAdmin = false;
-        const loadUsers = async () => {
-            let data = await fetchAsync({}, "/loadUsers");
-            const usersDiv = document.getElementById("select-user");
-            usersDiv.innerHTML = '';
-            data.forEach(e=>{
-                let element = document.createElement("div");
-                element.classList.add("user-element");
-                element.innerHTML = e.username;
-                element.userId = e.id;
-                element.status = e.banStatus;
-                element.onclick = login;
-                element.onmouseover = (e) => {
+    <div id="navigation-container">
+        <button onclick="goToHome()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Home</button>
+        <button onclick="showCategories()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Kategorie</button>
+        <button onclick="createNewAnnouncement()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Dodaj Ogłoszenie</button>
+        <button onclick="showMyAnnouncements()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Moje Ogłoszenia</button>
+        <button onclick="showMyWishList()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Ulubione</button>
+        <button id="stats-button" onclick="showStats()" style="padding: 10px 20px; font-size: 16px; cursor: pointer; display: none;">Statystyki</button>
+        <button id="banned-button" onclick="showBannedUsers()" style="padding: 10px 20px; font-size: 16px; cursor: pointer; display: none;">Zbanowani</button>
+    </div>
+    <div id="select-category" class="select-category"></div>
+    <div id="select-announcement" class="select-announcement"></div>
+    <div id="my-announcements" class="select-announcement">a</div>
+    <div class="announcement-container" id="announcement-container"></div>
+    <div id="edit-announcement" class="select-announcement"></div>
+    <div id="create-announcement" class="select-announcement"></div>
+    <div id="wishlist" class="select-announcement"></div>
+    <div id="display-stats" class="select-announcement"></div>
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="edit-modal" class="modal">
+        <h2>Edytuj Ogłoszenie</h2>
+        <input id="edit-title" placeholder="Tytuł" type="text">
+        <textarea id="edit-content" placeholder="Treść ogłoszenia"></textarea>
+        <button id="save-changes">Zapisz</button>
+        <button id="cancel-edit">Anuluj</button>
+    </div>
+    <div id="delete-confirm-modal" class="modal">
+        <p>Czy na pewno chcesz usunąć to ogłoszenie?</p>
+        <div>
+            <button id="confirm-delete-wishlist">Usuń</button>
+            <button id="cancel-delete-wishlist">Anuluj</button>
+        </div>
+    </div>
+    <div id="delete-modal-overlay" class="modal-overlay"></div>
+    <div id="no-announcements" style="display: none;"></div>
+</div>
+<script defer>
+    let user = "";
+    let userId = "";
+    let isAdmin = false;
+    let currentView = "category";
+    let lastClickedCategory = null;
+
+    const loadUsers = async () => {
+        let data = await fetchAsync({}, "/loadUsers");
+        const usersDiv = document.getElementById("select-user");
+        usersDiv.innerHTML = `<div class="select-user-header">! Wybierz Użytkownika !</div>`;
+
+        data.forEach(e=>{
+            let element = document.createElement("div");
+            element.classList.add("user-element");
+            element.innerHTML = e.username;
+            element.userId = e.id;
+            element.status = e.banStatus;
+            element.onclick = login;
+
+            element.onmouseover = (e) => {
+                if (!e.target.classList.contains("banned")) {
                     e.target.style.color = "red";
                     e.target.style.fontWeight = "bold";
                     e.target.style.cursor = "pointer";
-                };
-                element.onmouseout = (e) => {
+                }
+            }
+
+            element.onmouseout = (e) => {
+                if (!e.target.classList.contains("banned")) {
                     e.target.style.color = "#00274d";
                     e.target.style.fontWeight = "normal";
                     e.target.style.cursor = "default";
-                };
+                }
+            }
 
-                usersDiv.appendChild(element);
-            })
+            usersDiv.appendChild(element);
+        });
+    }
+
+    const login = async (e) => {
+        let banned = e.target.status;
+        if(banned){
+            console.log("użytkownik zbanowany");
+            return; //nie można się zalogować na zbanowanego usera
         }
 
-        const login = async (e) => {
-            let banned = e.target.status;
-            if(banned){
-                console.log("użytkownik zbanowany");
-                return; //nie można się zalogować na zbanowanego usera
+
+        let id = e.target.userId;
+
+        let reqData = {
+            "id":id
+        }
+        let data = await fetchAsync(reqData,"/login");
+
+        isAdmin = false;
+        if (data.state == "admin" || data.state == "logged") {
+            if (data.state == "admin") isAdmin = true;
+            userId = id;
+            user = e.target.innerHTML;
+            console.log("zalogowano:", user, "admin:", isAdmin, "id:", userId);
+
+            document.getElementById("select-user").style.display = "none";
+            document.getElementById("digital-board-header").style.display = "none";
+            document.getElementById("navigation-container").style.display = "block";
+            document.getElementById("select-category").style.display = "flex";
+
+            document.getElementById("edit-announcement").innerHTML = '';
+            document.getElementById("create-announcement").innerHTML = '';
+
+            if (isAdmin) {
+                document.getElementById("navigation-container").style.width = "60%";
+                document.getElementById("stats-button").style.display = "inline-block";
+                document.getElementById("banned-button").style.display = "inline-block";
+            } else {
+                document.getElementById("navigation-container").style.width = "50%";
+                document.getElementById("stats-button").style.display = "none";
+                document.getElementById("banned-button").style.display = "none";
             }
 
+            await displayCategories();
+        }
+    }
 
-            let id = e.target.userId;
+    const showBannedUsers = async () => {
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+        document.getElementById("select-announcement").innerHTML = '';
 
-            let reqData = {
-                "id":id
-            }
-            let data = await fetchAsync(reqData,"/login");
+        const container = document.getElementById("display-stats");
+        container.innerHTML = '';
+        container.style.visibility = 'visible';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
 
-            isAdmin = false;
-            if (data.state == "admin" || data.state == "logged") {
-                if (data.state == "admin") isAdmin = true;
-                userId = id;
-                user = e.target.innerHTML;
-                console.log("zalogowano:", user, "admin:", isAdmin, "id:", userId);
-                document.getElementById("select-user").style.display = "none";
-                document.getElementById("digital-board-header").style.display = "none";
-                document.getElementById("home-button").style.display = "block";
+        const bannedUsers = await fetchAsync({}, "/fetchBannedUsers");
 
-                document.getElementById("edit-announcement").innerHTML = '';
-                document.getElementById("create-announcement").innerHTML = '';
-
-                await displayMyAnnouncements();
-                await displayCategories();
-            }
+        if (bannedUsers.length === 0) {
+            const message = document.createElement("div");
+            message.innerText = "Brak zbanowanych użytkowników.";
+            message.style.textAlign = "center";
+            message.style.color = "#555";
+            container.appendChild(message);
+            showConfirmation("Brak zbanowanych użytkowników!", false);
+            return;
         }
 
-        const goToHome = () => {
-            document.getElementById("select-user").style.display = "block";
-            document.getElementById("digital-board-header").style.display = "block";
-            document.getElementById("home-button").style.display = "none";
+        bannedUsers.forEach(user => {
+            const userDiv = document.createElement("div");
+            userDiv.classList.add("user-div");
 
-            document.getElementById("select-category").style.visibility = "hidden";
-            document.getElementById("select-announcement").style.visibility = "hidden";
-            document.getElementById("my-announcements").style.visibility = "hidden";
-            document.getElementById("edit-announcement").style.visibility = "hidden";
-            document.getElementById("create-announcement").style.visibility = "hidden";
+            const userInfo = document.createElement("div");
+            userInfo.classList.add("user-info");
+            userInfo.innerText = `Użytkownik: ${user.username}`;
 
-            user = "";
-            userId = "";
-            isAdmin = false;
-            document.getElementById("select-announcement").innerHTML = '';
-        };
+            const unbanButton = document.createElement("button");
+            unbanButton.classList.add("unban-button");
+            unbanButton.innerText = "Odbanuj";
 
-
-        const createAnnouncementsElements = (data, containerId,initialHTML) => {
-            let announcementsDiv = document.getElementById(containerId);
-            announcementsDiv.style.visibility = "visible";
-            announcementsDiv.innerHTML = initialHTML;
-
-            console.log(data);
-            data.forEach(e => {
-                let id = document.createElement("div");
-                id.innerText = e.id;
-
-                let title = document.createElement("div");
-                title.innerText = e.title;
-
-                let content = document.createElement("div");
-                content.innerText = e.content;
-
-                let owner = document.createElement("div");
-                owner.innerText = e.owner.username;
-
-                let category = document.createElement("div");
-                category.innerText = e.category.name;
-
-                let comments = document.createElement("div");
-                comments.innerHTML = "Komentarze<br>";
-                for (let i = 0; i < e.comments.length; i++) {
-                    comments.innerHTML += e.comments[i] + "<br>";
+            unbanButton.onclick = async () => {
+                const response = await fetchAsync({ id: user.id }, "/unbanUser");
+                if (response.state === "success") {
+                    showConfirmation(`Użytkownik ${user.username} został odbanowany!`, true);
+                    await loadUsers();
+                    await showBannedUsers();
                 }
+            }
 
-                let commentDiv = document.createElement("div");
-
-                let comment = document.createElement("input");
-                comment.placeholder = "napisz komentarz...";
-
-                let sendComment = document.createElement("div");
-                sendComment.classList.add("button");
-                sendComment.innerText = "wyślij komentarz";
-                sendComment.onclick = async(event) =>{
-                    console.log(comment.value);
-                    let data = await fetchAsync({state:user+":"+comment.value},"/commentOnAnnouncement/"+e.id);
-                    if(data != null){
-                        await displayAnnouncementsByCategory(e.category.name);
-                        await displayMyAnnouncements();
-                    }
-                }
-                commentDiv.append(comment, sendComment);
-
-                const heart = document.createElement("div");
-                heart.style.width = "25px";
-                heart.style.height = "25px";
+            userDiv.appendChild(userInfo);
+            userDiv.appendChild(unbanButton);
+            container.appendChild(userDiv);
+        });
+    }
 
 
-                if(containerId === "wishlist"){
-                    heart.clicked = true
-                    heart.style.backgroundImage = 'url("heart.png")';
-                }else {
-                    heart.clicked = false;
-                    heart.style.backgroundImage = 'url("heart_off.png")';
-                }
+    const showStats = async () => {
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+        document.getElementById("select-announcement").innerHTML = '';
 
-                heart.style.backgroundSize = "25px";
-                heart.onclick = async (ev) => {
-                    heart.clicked = !heart.clicked;
-                    if (heart.clicked){
-                        heart.style.backgroundImage = 'url("heart.png")';
-                    }else {
-                        heart.style.backgroundImage = 'url("heart_off.png")';
-                    }
-                    let wishlistData = await fetchAsync({state:e.id},"/addToWishlist/"+userId);
-                    createAnnouncementsElements(wishlistData,"wishlist","Ulubione");
-                }
+        const container = document.getElementById("display-stats");
+        container.innerHTML = '';
+        container.style.visibility = 'visible';
+        container.style.display = "flex";
+        container.style.flexDirection = "column";
 
-                const div = document.createElement("div");
-                div.id = e.id;
-                div.append(id, title, content, owner, category, comments, commentDiv, heart);
-                div.classList.add("announcement");
+        const statsData = await fetchAsync({}, "/viewGeneralStatistics");
 
-                if (isAdmin){
-                    getStats();
-                    const deleteButton = document.createElement("div");
-                    deleteButton.onclick = async ()=>{
-                        let data = await fetchAsync({},"/deleteAnnouncement/"+e.id);
-                        if (data.state === "success"){
-                            document.getElementById("edit-announcement").innerHTML = '';
-                            await displayAnnouncementsByCategory(category.innerText);
+        const header = document.createElement("h2");
+        header.innerText = "Statystyki Systemu";
+        header.style.textAlign = "center";
+        header.style.color = "white";
+        header.style.backgroundColor = "#00274d";
+        header.style.padding = "15px";
+        header.style.borderRadius = "10px";
+        header.style.margin = "0 auto 20px auto";
+        header.style.display = "inline-block";
+        container.appendChild(header);
+
+        const table = document.createElement("table");
+        table.style.width = "100%";
+        table.style.maxWidth = "600px";
+        table.style.margin = "0 auto";
+        table.style.borderCollapse = "collapse";
+        table.style.backgroundColor = "#00274d";
+        table.style.color = "white";
+        table.style.borderRadius = "10px";
+        table.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+
+        const thead = document.createElement("thead");
+        thead.innerHTML = `
+            <tr style="font-size: 18px;">
+                <th style="padding: 10px; border: 1px solid white;">Kategoria</th>
+                <th style="padding: 10px; border: 1px solid white;">Wartość</th>
+            </tr>`;
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        tbody.innerHTML = `
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba użytkowników</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.totalUsers}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba zbanowanych użytkowników</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.bannedUsers}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba ogłoszeń</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.totalAnnouncements}</td>
+            </tr>`;
+        table.appendChild(tbody);
+
+        container.appendChild(table);
+    }
+
+    const showMyAnnouncements = async () => {
+        currentView = "myAnnouncements";
+        document.getElementById("my-announcements").style.display = "flex";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+        document.getElementById("select-announcement").innerHTML = '';
+        await displayMyAnnouncements();
+    }
+
+    const showCategories = async () => {
+        currentView = "category";
+        document.getElementById("select-category").style.display = "flex";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+        document.getElementById("select-announcement").innerHTML = '';
+
+        await displayCategories();
+    }
+
+    const showMyWishList = async () => {
+        currentView = "wishlist";
+        document.getElementById("wishlist").style.display = "flex";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+        document.getElementById("select-announcement").innerHTML = '';
+
+        let data = await fetchAsync({}, `/fetchWishlist/${userId}`);
+
+        if (data.length === 0) {
+            showConfirmation("Brak ulubionych ogłoszeń!", false);
+            showNoAnnouncementsMessage('no-announcements');
+            return;
+        } else {
+            createAnnouncementsElements(data, "wishlist");
+            document.getElementById("no-announcements").style.display = 'none';
+        }
+    }
+
+    const goToHome = () => {
+        document.getElementById("select-user").style.display = "block";
+        document.getElementById("digital-board-header").style.display = "block";
+        document.getElementById("navigation-container").style.display = "none";
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("create-announcement").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+
+        user = "";
+        userId = "";
+        isAdmin = false;
+        document.getElementById("select-announcement").innerHTML = '';
+    }
+
+
+    const createAnnouncementsElements = (data, containerId, initialHTML) => {
+        const announcementsDiv = document.getElementById(containerId);
+        announcementsDiv.style.visibility = "visible";
+        announcementsDiv.innerHTML = "";
+        announcementsDiv.classList.add('announcement-container');
+
+        data.forEach(e => {
+            const div = document.createElement("div");
+            div.classList.add("announcement");
+
+            const title = document.createElement("div");
+            title.innerText = e.title;
+            title.classList.add("title");
+
+            const content = document.createElement("div");
+            content.innerText = e.content;
+            content.classList.add("content");
+
+            const owner = document.createElement("div");
+            owner.innerText = `Autor: ${e.owner.username}`;
+            owner.classList.add("owner");
+
+            const category = document.createElement("div");
+            category.innerText = e.category.name;
+            category.classList.add("category");
+
+            const comments = document.createElement("div");
+            comments.innerHTML = "Comments:<br>" + e.comments.map(c => `- ${c}`).join("<br>");
+            comments.classList.add("comments");
+
+            announcementsDiv.appendChild(div);
+
+            const commentDiv = document.createElement("div");
+            commentDiv.classList.add("comments-container");
+
+            const commentInput = document.createElement("input");
+            commentInput.placeholder = "Napisz Komentarz...";
+            commentInput.classList.add("comment-input");
+
+            const sendComment = document.createElement("div");
+            sendComment.classList.add("button");
+            sendComment.innerText = "Wyślij komentarz";
+            sendComment.onclick = async (event) => {
+                if (commentInput.value.trim() === "") {
+                    showConfirmation("Proszę uzupełnić treść komentarza!", false);
+                    return;
+                } else {
+                    console.log(commentInput.value);
+                    let data = await fetchAsync({ state: user + ":" + commentInput.value }, "/commentOnAnnouncement/" + e.id);
+                    if (data != null) {
+                        if (currentView === "category") {
+                            await displayAnnouncementsByCategory(e.category.name);
+                            showConfirmation("Pomyślnie dodano komentarz!", true);
+                        } else if (currentView === "myAnnouncements") {
+                            await displayMyAnnouncements();
+                            showConfirmation("Pomyślnie dodano komentarz!", true);
+                        } else if (currentView === "wishlist") {
+                            await showMyWishList();
+                            showConfirmation("Pomyślnie dodano komentarz!", true);
                         }
                     }
-                    deleteButton.innerText = "usuń";
-                    deleteButton.classList.add("button");
+                }
+            }
 
-                    const banButton = document.createElement("div");
-                    banButton.classList.add("button");
-                    banButton.innerText = "zbanuj";
-                    banButton.onclick = async() =>{
-                        let id = e.owner.id;
-                        let data = await banUser(id);
-                        if(data.state === "success"){
+            commentDiv.append(commentInput, sendComment);
+            div.appendChild(commentDiv);
+
+            const heart = document.createElement("div");
+            heart.style.width = "50px";
+            heart.style.height = "50px";
+            heart.style.backgroundSize = "cover";
+
+            heart.clicked = e.isFavorite;
+            heart.style.backgroundImage = heart.clicked ? 'url("heart.png")' : 'url("heart_off.png")';
+
+            heart.onclick = async (ev) => {
+                heart.clicked = !heart.clicked;
+                heart.style.backgroundImage = heart.clicked ? 'url("heart.png")' : 'url("heart_off.png")';
+
+                await fetchAsync({ state: e.id }, `/addToWishlist/${userId}`);
+
+                if (heart.clicked) {
+                    showConfirmation("Dodano ogłoszenie do ulubionych!", true);
+                } else {
+                    showConfirmation("Usunięto ogłoszenie z ulubionych!", false);
+                }
+
+                if (currentView === "wishlist") {
+                    let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
+                    createAnnouncementsElements(wishlistData, "wishlist");
+                }
+            }
+
+            div.append(title, content, owner, category, comments, commentDiv, heart);
+
+            if (isAdmin && e.owner.username !== user) {
+                // Przycisk usuń
+                const deleteButton = document.createElement("div");
+                deleteButton.classList.add("button", "delete");
+                deleteButton.innerText = "Usuń";
+                deleteButton.onclick = async () => {
+                    event.stopPropagation();
+
+                    const modal = document.getElementById("delete-confirm-modal");
+                    const overlay = document.getElementById("delete-modal-overlay");
+                    modal.classList.add("show");
+                    overlay.classList.add("show");
+
+                    const modalText = modal.querySelector("p");
+                    modalText.innerText = "Czy na pewno chcesz usunąć to ogłoszenie?";
+
+                    const confirmButton = document.getElementById("confirm-delete-wishlist");
+                    const cancelButton = document.getElementById("cancel-delete-wishlist");
+                    confirmButton.innerText = "Usuń";
+
+                    confirmButton.onclick = async () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+
+                        let data = await fetchAsync({}, "/deleteAnnouncement/" + e.id);
+                        if (data.state === "success") {
+                            showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                            if (currentView === "category") {
+                                await displayAnnouncementsByCategory(e.category.name);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                            } else if (currentView === "wishlist") {
+                                let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
+                                createAnnouncementsElements(wishlistData, "wishlist");
+                            }
+                        }
+                    }
+
+                    cancelButton.onclick = () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+                        showConfirmation("Anulowano usuwanie ogłoszenia!", false);
+                    }
+                }
+
+                // Przycisk edytuj
+                const editButton = document.createElement("div");
+                editButton.classList.add("button");
+                editButton.innerText = "Edytuj";
+                editButton.onclick = async () => {
+                    let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
+
+                    document.getElementById('edit-title').value = announcementData.title;
+                    document.getElementById('edit-content').value = announcementData.content;
+
+                    if (!document.getElementById('modal-overlay').classList.contains('show')) {
+                        document.getElementById('modal-overlay').classList.add('show');
+                        document.getElementById('edit-modal').classList.add('show');
+                    }
+
+                    document.getElementById('save-changes').onclick = async () => {
+                        const updatedData = {
+                            id: announcementData.id,
+                            title: document.getElementById('edit-title').value,
+                            content: document.getElementById('edit-content').value
+                        }
+
+                        const response = await fetchAsync(updatedData, "/editAnnouncement");
+                        if (response.state === "success") {
+                            document.getElementById('modal-overlay').classList.remove('show');
+                            document.getElementById('edit-modal').classList.remove('show');
+                            showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                            if (currentView === "category") {
+                                await displayAnnouncementsByCategory(e.category.name);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                            } else if (currentView === "wishlist") {
+                                await showMyWishList();
+                            }
+                        }
+                    }
+
+                    document.getElementById('cancel-edit').onclick = () => {
+                        document.getElementById('modal-overlay').classList.remove('show');
+                        document.getElementById('edit-modal').classList.remove('show');
+                        showConfirmation("Anulowano edycję ogłoszenia!", false);
+                    }
+                }
+
+                // Przycisk zbanuj
+                const banButton = document.createElement("div");
+                banButton.classList.add("button", "ban");
+                banButton.innerText = "Zbanuj";
+                banButton.onclick = async () => {
+                    event.stopPropagation();
+                    const username = e.owner.username;
+
+                    const modal = document.getElementById("delete-confirm-modal");
+                    const overlay = document.getElementById("delete-modal-overlay");
+
+                    modal.classList.add("show");
+                    overlay.classList.add("show");
+
+                    const modalText = modal.querySelector("p");
+                    modalText.innerText = `Czy na pewno chcesz zbanować użytkownika: ${username}?`;
+
+                    const confirmButton = document.getElementById("confirm-delete-wishlist");
+                    const cancelButton = document.getElementById("cancel-delete-wishlist");
+                    confirmButton.innerText = "Zbanuj";
+
+                    confirmButton.onclick = async () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+
+                        const response = await fetchAsync({ id: e.owner.id }, "/banUser");
+
+                        if (response.state === "success") {
+                            showConfirmation(`Użytkownik ${e.owner.username} został zbanowany!`, true);
+
+                            if (currentView === "category" && lastClickedCategory) {
+                                await displayAnnouncementsByCategory(lastClickedCategory.name);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                            } else if (currentView === "wishlist") {
+                                await showMyWishList();
+                            }
+
                             await loadUsers();
                         }
                     }
 
-                    div.append(deleteButton,banButton);
+                    cancelButton.onclick = () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+                        showConfirmation("Anulowano banowanie użytkownika!", false);
+                    }
                 }
 
-                announcementsDiv.appendChild(div);
-            })
-        }
-
-        const banUser = async (id) => {
-            return await fetchAsync({id:id},"/banUser");
-        }
-
-        const getStats = async ()=>{
-            const container = document.getElementById("display-stats")
-            container.innerHTML = '';
-            container.style.visibility = 'visible';
-            const button = document.createElement("div");
-            button.innerText = "statystyki";
-            button.classList.add("button");
-            button.onclick = async()=>{
-                let data = await fetchAsync({},"/viewGeneralStatistics");
-                container.innerHTML += `<div>Liczba użytkowników:${data.totalUsers}</div>
-                <div>Liczba ogłoszeń:${data.totalAnnouncements}</div>`;
-            }
-            container.appendChild(button);
-        }
-
-        const createEditionAnnouncementsElements = (data, containerId, initialHTML) => {
-            let announcementsDiv = document.getElementById(containerId);
-            announcementsDiv.style.visibility = "visible";
-            announcementsDiv.innerHTML = initialHTML;
-
-            let id = document.createElement("div");
-            id.innerText = data.id;
-
-            let title = document.createElement("textarea");
-            title.innerText = data.title;
-
-            let content = document.createElement("textarea");
-            content.innerText = data.content;
-
-            let owner = document.createElement("div");
-            owner.innerText = data.owner.username;
-
-            let category = document.createElement("div");
-            category.innerText = data.category.name;
-
-            let comments = document.createElement("div");
-            for (let i = 0; i < data.comments.length; i++) {
-                comments.innerText += data.comments[i] + "\n";
+                div.append(deleteButton, editButton, banButton);
             }
 
-            const button = document.createElement("div");
-            button.classList.add("button");
-            button.innerText = "zapisz";
-            button.onclick = sendEdited;
-
-            const div = document.createElement("div");
-            div.id = data.id;
-            div.append(id, title, content, owner, category, comments, button);
-            div.classList.add("announcement");
             announcementsDiv.appendChild(div);
-        }
 
-        const sendEdited = async (e) => {
-            const elements = e.target.parentElement.childNodes;
-            let data = {
-                id:elements[0].innerText,
-                title:elements[1].value,
-                content:elements[2].value,
-                owner:Object,
-                category:Object,
-                comments:Array
-            };
+            if (e.owner.username === user) {
+                const buttonsDiv = document.createElement("div");
+                buttonsDiv.classList.add("buttons-container");
 
-            console.log(data);
-            let response = await fetchAsync(data,"/editAnnouncement");
+                const deleteAnnouncement = document.createElement("div");
+                deleteAnnouncement.onclick = () => {
+                    event.stopPropagation();
 
-            if(response.state === "success"){
-                document.getElementById("edit-announcement").innerHTML = '';
-                await displayMyAnnouncements();
-            }
-        }
+                    const modal = document.getElementById("delete-confirm-modal");
+                    const overlay = document.getElementById("delete-modal-overlay");
+                    modal.classList.add("show");
+                    overlay.classList.add("show");
 
-        const displayMyAnnouncements = async () => {
-            let reqData = {};
-            let data = await fetchAsync(reqData, "/fetchMyAnouncements/" + userId);
-            createAnnouncementsElements(data, "my-announcements","Moje Ogłoszenia");
+                    const modalText = modal.querySelector("p");
+                    modalText.innerText = "Czy na pewno chcesz usunąć to ogłoszenie?";
 
-            const announcements = document.getElementById("my-announcements").childNodes;
-            announcements.forEach(e=>{
-                if(e.nodeName !== "#text") {
-                    const buttonsDiv = document.createElement("div");
-                    buttonsDiv.classList.add("buttons-container");
+                    const confirmButton = document.getElementById("confirm-delete-wishlist");
+                    const cancelButton = document.getElementById("cancel-delete-wishlist");
+                    confirmButton.innerText = "Usuń";
 
-                    const deleteAnnouncement = document.createElement("div");
-                    deleteAnnouncement.onclick = deleteMyAnnouncement;
-                    deleteAnnouncement.classList.add("button");
-                    deleteAnnouncement.innerText = "usuń";
-                    buttonsDiv.appendChild(deleteAnnouncement);
+                    confirmButton.onclick = async () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
 
-                    const editAnnouncement = document.createElement("div");
-                    editAnnouncement.onclick = editMyAnnouncement;
-                    editAnnouncement.classList.add("button");
-                    editAnnouncement.innerText = "edytuj";
-                    buttonsDiv.appendChild(editAnnouncement);
-
-                    e.appendChild(buttonsDiv);
-                };
-            })
-            const createNewAnnouncementButton = document.createElement("div");
-            createNewAnnouncementButton.innerText = "dodaj";
-            createNewAnnouncementButton.onclick = createNewAnnouncement;
-            createNewAnnouncementButton.classList.add("button2");
-
-            const announcementListElement = document.getElementById("my-announcements");
-            announcementListElement.append(createNewAnnouncementButton);
-        }
-
-        const createNewAnnouncement = async ()=>{
-            let announcementsDiv = document.getElementById("create-announcement");
-            announcementsDiv.style.visibility = "visible";
-            announcementsDiv.innerHTML = "Dodaj Ogłoszenie";
-
-            let title = document.createElement("input");
-            title.placeholder = "tytuł";
-            let content = document.createElement("textarea");
-
-            let categoriesData = await fetchAsync({},"/browseCategories");
-            let category = document.createElement("select");
-            category.name = "categories";
-            category.id = "categories-select";
-
-            for(let i = 0; i < categoriesData.length; i++){
-                let elem = document.createElement("option");
-                elem.innerHTML = categoriesData[i].name;
-                elem.value = categoriesData[i].name;
-                category.append(elem);
-            }
-
-            content.placeholder = "treść ogłoszenia";
-            const button = document.createElement("div");
-            button.classList.add("button");
-            button.innerText = "dodaj";
-            button.onclick = sendCreated;
-
-            const div = document.createElement("div");
-            div.append(title, content, category, button);
-            div.classList.add("create-announcement");
-            announcementsDiv.appendChild(div);
-        };
-
-        const sendCreated = async (e) => {
-            const elements = e.target.parentElement.childNodes;
-            let data = {
-                id:1,
-                title:elements[0].value,
-                content:elements[1].value,
-                owner: {
-                    username:user,
-                    id:userId,
-                    banStatus:false,
-                    wishlist:[]
-                },
-                category:{
-                    name:document.getElementById("categories-select").value,
-                    id:1,
-                    description:"kategoria"
-                },
-                comments:[]
-            };
-
-            let announcement = await fetchAsync(data,"/publishAnnouncement");
-
-            if(announcement != undefined){
-                document.getElementById("create-announcement").innerHTML = '';
-                await displayMyAnnouncements();
-            }
-        }
-
-        const deleteMyAnnouncement = async (e)=>{
-            const announcementId = e.target.parentElement.parentElement.id; // xDDDD
-            let data = await fetchAsync({},"/deleteAnnouncement/"+announcementId);
-            if (data.state === "success"){
-                document.getElementById("edit-announcement").innerHTML = '';
-                await displayMyAnnouncements();
-            }
-        };
-
-        const editMyAnnouncement = async (e) => {
-            const announcementId = e.target.parentElement.parentElement.id;
-            //pobranie announcementa
-            let data = await fetchAsync({},"/getAnnouncement/"+announcementId);
-            //zmiana danych
-            createEditionAnnouncementsElements(data,"edit-announcement","Edytuj Ogłoszenie");
-            //odesłanie w funkcji sendEdited
-        };
-
-        const displayCategories = async () => {
-            let reqData = {};
-            let data = await fetchAsync(reqData, "/browseCategories");
-            const categoriesDiv = document.getElementById("select-category");
-            categoriesDiv.style.visibility = "visible";
-            categoriesDiv.innerHTML = ""; // Wyczyszczenie poprzednich danych
-
-            const title = document.createElement("h2");
-            title.innerText = "Kategorie Ogłoszeń:";
-            title.style.color = "#00274d";
-            title.style.marginBottom = "20px";
-            categoriesDiv.appendChild(title);
-
-            data.forEach(e => {
-                let elem = document.createElement("div");
-                elem.innerHTML = e.name;
-                elem.name = e.name;
-                elem.onclick = displayAnnouncements;
-                elem.onmouseover = (e) => {
-                    e.target.style.background = "#9370DB";
-                    // e.target.style.fontWeight = "bold";
-                };
-                elem.onmouseout = (e) => {
-                    e.target.style.background = "#f5f5f5";
-                    // e.target.style.fontWeight = "normal";
-                };
-                categoriesDiv.appendChild(elem);
-                if(isAdmin){
-                    const removeCategory = document.createElement("div");
-                    removeCategory.classList.add("button");
-                    removeCategory.innerText = "usuń";
-                    removeCategory.onclick = async(event) => {
-                        event.stopPropagation();
-                        let respData = await fetchAsync({id:e.id},"/removeCategory");
-                        if(respData != null){
-                            await displayCategories();
-                            document.getElementById("select-announcement").innerHTML = 'Przeglądaj Ogłoszenia';
+                        let data = await fetchAsync({}, `/deleteAnnouncement/${e.id}`);
+                        if (data.state === "success") {
+                            showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                            if (currentView === "category") {
+                                await displayAnnouncementsByCategory(e.category.name);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                            } else if (currentView === "wishlist") {
+                                let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
+                                createAnnouncementsElements(wishlistData, "wishlist");
+                            }
                         }
                     }
-                    elem.appendChild(removeCategory);
+
+                    cancelButton.onclick = () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+                        showConfirmation("Anulowano usuwanie ogłoszenia!", false);
+                    }
                 }
-            });
+
+                deleteAnnouncement.classList.add("button", "delete");
+                deleteAnnouncement.innerText = "usuń";
+                buttonsDiv.appendChild(deleteAnnouncement);
+
+                const editAnnouncement = document.createElement("div");
+                editAnnouncement.onclick = async () => {
+                    let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
+
+                    document.getElementById('edit-title').value = announcementData.title;
+                    document.getElementById('edit-content').value = announcementData.content;
+
+                    if (!document.getElementById('modal-overlay').classList.contains('show')) {
+                        document.getElementById('modal-overlay').classList.add('show');
+                        document.getElementById('edit-modal').classList.add('show');
+                    }
+
+                    document.getElementById('save-changes').onclick = async () => {
+                        const updatedData = {
+                            id: announcementData.id,
+                            title: document.getElementById('edit-title').value,
+                            content: document.getElementById('edit-content').value
+                        }
+
+                        const response = await fetchAsync(updatedData, "/editAnnouncement");
+                        if (response.state === "success") {
+                            document.getElementById('modal-overlay').classList.remove('show');
+                            document.getElementById('edit-modal').classList.remove('show');
+                            showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                            if (currentView === "category") {
+                                await displayAnnouncementsByCategory(e.category.name);
+                            } else if (currentView === "myAnnouncements") {
+                                await displayMyAnnouncements();
+                            } else if (currentView === "wishlist") {
+                                await showMyWishList();
+                            }
+                        }
+                    }
+
+                    document.getElementById('cancel-edit').onclick = () => {
+                        document.getElementById('modal-overlay').classList.remove('show');
+                        document.getElementById('edit-modal').classList.remove('show');
+                        showConfirmation("Anulowano edycje ogłoszenia!", false);
+                    }
+                }
+                editAnnouncement.classList.add("button");
+                editAnnouncement.innerText = "edytuj";
+                buttonsDiv.appendChild(editAnnouncement);
+
+
+                div.appendChild(buttonsDiv);
+            }
+        });
+    }
+
+    const banUser = async (id) => {
+        return await fetchAsync({id:id},"/banUser");
+    }
+
+    const sendEdited = async (e) => {
+        const elements = e.target.parentElement.childNodes;
+        let data = {
+            id:elements[0].innerText,
+            title:elements[1].value,
+            content:elements[2].value,
+            owner:Object,
+            category:Object,
+            comments:Array
+        }
+
+        console.log(data);
+        let response = await fetchAsync(data,"/editAnnouncement");
+
+        if(response.state === "success"){
+            document.getElementById("edit-announcement").innerHTML = '';
+            await displayMyAnnouncements();
+        }
+    }
+
+    const displayMyAnnouncements = async () => {
+        let reqData = {};
+        let data = await fetchAsync(reqData, "/fetchMyAnouncements/" + userId);
+        const announcementsContainer = document.getElementById("my-announcements");
+
+        if (data.length === 0) {
+            announcementsContainer.innerHTML = "";
+            showConfirmation("Brak dodanych ogłoszeń!", false);
+            showNoAnnouncementsMessage('no-announcements');
+            return;
+        } else {
+            createAnnouncementsElements(data, "my-announcements");
+            document.getElementById("no-announcements").style.display = 'none';
+        }
+    }
+
+    const createNewAnnouncement = async ()=> {
+        let announcementsDiv = document.getElementById("create-announcement");
+        announcementsDiv.innerHTML = "";
+
+        announcementsDiv.style.visibility = "visible";
+        announcementsDiv.style.display = "block";
+        document.getElementById("my-announcements").style.display = "none";
+        document.getElementById("select-category").style.display = "none";
+        document.getElementById("wishlist").style.display = "none";
+        document.getElementById("display-stats").style.display = "none";
+        document.getElementById("no-announcements").style.display = 'none';
+        document.getElementById("select-announcement").innerHTML = '';
+
+        let titleDiv = document.createElement("div");
+        titleDiv.classList.add("create-announcement-title");
+        titleDiv.innerText = "Dodaj Ogłoszenie";
+
+        let title = document.createElement("input");
+        title.placeholder = "Tytuł";
+        let content = document.createElement("textarea");
+
+        let categoriesData = await fetchAsync({}, "/browseCategories");
+        let category = document.createElement("select");
+        category.name = "categories";
+        category.id = "categories-select";
+        category.classList.add("category-select");
+
+        for(let i = 0; i < categoriesData.length; i++) {
+            let elem = document.createElement("option");
+            elem.innerHTML = categoriesData[i].name;
+            elem.value = categoriesData[i].name;
+            category.append(elem);
+        }
+
+        content.placeholder = "Treść ogłoszenia";
+        const button = document.createElement("div");
+        button.classList.add("button");
+        button.innerText = "Dodaj";
+        button.onclick = sendCreated;
+
+        const div = document.createElement("div");
+        div.append(title, content, category, button);
+        div.classList.add("create-announcement");
+        announcementsDiv.appendChild(titleDiv);
+        announcementsDiv.appendChild(div);
+    }
+
+
+    const sendCreated = async (e) => {
+        const elements = e.target.parentElement.childNodes;
+
+        let title = elements[0].value.trim();
+        let content = elements[1].value.trim();
+        let category = document.getElementById("categories-select").value;
+
+        if (!title || !content || !category) {
+            showConfirmation("Proszę wypełnić wszystkie pola!", false);
+            return;
+        }
+
+        let data = {
+            id:1,
+            title:elements[0].value,
+            content:elements[1].value,
+            owner: {
+                username:user,
+                id:userId,
+                banStatus:false,
+                wishlist:[]
+            },
+            category:{
+                name:document.getElementById("categories-select").value,
+                id:1,
+                description:"kategoria"
+            },
+            comments:[]
+        }
+
+        let announcement = await fetchAsync(data,"/publishAnnouncement");
+        elements[0].value = "";
+        elements[1].value = "";
+        showConfirmation("Ogłoszenie zostało pomyślnie dodane!", true);
+    }
+
+     const showConfirmation = (message, isSuccess) => {
+        const confirmationDiv = document.createElement("div");
+        confirmationDiv.classList.add("confirmation-message");
+        confirmationDiv.innerText = message;
+
+        confirmationDiv.style.position = "fixed";
+        confirmationDiv.style.top = "10px";
+        confirmationDiv.style.right = "10px";
+        confirmationDiv.style.padding = "20px 30px";
+        confirmationDiv.style.color = "white";
+        confirmationDiv.style.borderRadius = "10px";
+        confirmationDiv.style.boxShadow = "0 6px 12px rgba(0, 0, 0, 0.2)";
+        confirmationDiv.style.zIndex = "1000";
+        confirmationDiv.style.fontSize = "18px";
+
+        if (isSuccess) {
+            confirmationDiv.style.backgroundColor = "#4CAF50";
+        } else {
+            confirmationDiv.style.backgroundColor = "#f44336";
+        }
+
+        document.body.appendChild(confirmationDiv);
+
+        setTimeout(() => {
+            confirmationDiv.remove();
+        }, 3000);
+    }
+
+    const deleteMyAnnouncement = async (e)=>{
+        const announcementId = e.target.parentElement.parentElement.id; // xDDDD
+        let data = await fetchAsync({},"/deleteAnnouncement/"+announcementId);
+        if (data.state === "success"){
+            document.getElementById("edit-announcement").innerHTML = '';
+            await displayMyAnnouncements();
+        }
+    }
+
+    const displayCategories = async () => {
+        let reqData = {};
+        let data = await fetchAsync(reqData, "/browseCategories");
+        const categoriesDiv = document.getElementById("select-category");
+        categoriesDiv.style.visibility = "visible";
+        categoriesDiv.innerHTML = "";
+
+        const title = document.createElement("h2");
+        title.innerText = "Kategorie Ogłoszeń:";
+        title.style.color = "#00274d";
+        title.style.marginBottom = "20px";
+        categoriesDiv.appendChild(title);
+
+        data.forEach(e => {
+            let elem = document.createElement("div");
+            elem.innerHTML = e.name;
+            elem.name = e.name;
+            elem.classList.add("category");
+
+            elem.onclick = (e) => {
+                let allCategories = document.querySelectorAll('.category');
+                allCategories.forEach(category => {
+                    category.style.background = "#f5f5f5";
+                    category.style.fontWeight = "normal";
+                });
+                lastClickedCategory = e.target;
+
+                e.target.style.background = "#9370DB";
+                e.target.style.fontWeight = "bold";
+
+                displayAnnouncements(e);
+            }
+            elem.onmouseover = (e) => {
+                if (e.target === elem) {
+                    if (e.target !== lastClickedCategory || lastClickedCategory === null) {
+                        e.target.style.background = "#9370DB";
+                        e.target.style.fontWeight = "bold";
+                    }
+                }
+            }
+
+            elem.onmouseout = (e) => {
+                if (e.target === elem) { // Sprawdza, czy zdarzenie pochodzi bezpośrednio z elementu kategorii
+                    if (e.target !== lastClickedCategory || lastClickedCategory === null) {
+                        e.target.style.background = "#f5f5f5";
+                        e.target.style.fontWeight = "normal";
+                    }
+                }
+            }
+            categoriesDiv.appendChild(elem);
 
             if(isAdmin){
-                const addCategory = document.createElement("div");
-                addCategory.classList.add("button");
-                addCategory.innerText = "dodaj";
+                const removeCategory = document.createElement("div");
+                removeCategory.classList.add("button");
+                removeCategory.innerText = "usuń";
+                removeCategory.style.backgroundColor = "red";
+                removeCategory.style.color = "white";
+
+                removeCategory.onmouseover = () => {
+                    removeCategory.style.backgroundColor = "#b22222";
+                }
+
+                removeCategory.onmouseout = () => {
+                    removeCategory.style.backgroundColor = "red";
+                }
+
+                removeCategory.onclick = (event) => {
+                    event.stopPropagation();
+                    const categoryName = e.name;
+
+                    const modal = document.getElementById("delete-confirm-modal");
+                    const overlay = document.getElementById("delete-modal-overlay");
+                    modal.classList.add("show");
+                    overlay.classList.add("show");
+
+                    const modalText = modal.querySelector("p");
+                    modalText.innerText = `Czy na pewno chcesz usunąć kategorie "${e.name}"?`;
+
+                    const confirmButton = document.getElementById("confirm-delete-wishlist");
+                    const cancelButton = document.getElementById("cancel-delete-wishlist");
+
+                    confirmButton.onclick = async () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+
+                        let respData = await fetchAsync({ id: e.id }, "/removeCategory");
+                        if (respData != null) {
+                            await displayCategories();
+                            showConfirmation(`Usunięto kategorie "${categoryName}"!`, true);
+                        }
+                    }
+
+                    cancelButton.onclick = () => {
+                        modal.classList.remove("show");
+                        overlay.classList.remove("show");
+                        showConfirmation("Anulowano usuwanie kategorii!", false);
+                    }
+                }
+                elem.appendChild(removeCategory);
+            }
+        });
+
+        if (isAdmin) {
+            const addCategory = document.createElement("div");
+            addCategory.classList.add("button");
+            addCategory.innerText = "Dodaj Kategorie";
+            addCategory.style.backgroundColor = "green";
+            addCategory.style.color = "white";
+
+            addCategory.onmouseover = () => {
+                addCategory.style.backgroundColor = "#2e8b57";
+            }
+
+            addCategory.onmouseout = () => {
+                addCategory.style.backgroundColor = "green";
+            }
+
+            const setupAddCategory = () => {
+                addCategory.innerHTML = "Dodaj Kategorie";
                 addCategory.onclick = (e) => {
                     addCategory.innerHTML = '';
-                    addCategory.onclick = ()=>{return;};
+                    addCategory.onclick = () => { return; }
+
                     const categoryName = document.createElement("textarea");
-                    categoryName.placeholder = "nazwa...";
+                    categoryName.placeholder = "Nazwa...";
 
                     const sendNewCategory = document.createElement("div");
-                    sendNewCategory.innerText = "dodaj";
-                    sendNewCategory.onclick = async(ev)=>{
-                        let data = await fetchAsync({name:categoryName.value},"/addCategory");
-                        if(data != null){
-                            await displayCategories();
+                    sendNewCategory.innerText = "potwierdź";
+                    sendNewCategory.style.backgroundColor = "green";
+                    sendNewCategory.style.color = "white";
+
+                    sendNewCategory.onmouseover = () => {
+                        sendNewCategory.style.backgroundColor = "#2e8b57";
+                    }
+
+                    sendNewCategory.onmouseout = () => {
+                        sendNewCategory.style.backgroundColor = "green";
+                    }
+
+                    sendNewCategory.onclick = async (ev) => {
+                        const category = categoryName.value.trim();
+                        if (!categoryName.value.trim()) {
+                            showConfirmation("Proszę wpisać nazwę kategorii!", false);
+                            return;
                         }
-                    };
+                        let data = await fetchAsync({ name: categoryName.value.trim() }, "/addCategory");
+                        if (data != null) {
+                            await displayCategories();
+                            showConfirmation(`Dodano kategorię: "${category}"!`, true);
+                        }
+                    }
+                    e.target.append(categoryName, sendNewCategory);
 
-                    e.target.append(categoryName,sendNewCategory);
+                    const handleOutsideClick = (event) => {
+                        if (!e.target.contains(event.target)) {
+                            document.removeEventListener("click", handleOutsideClick);
+                            setupAddCategory();
+                        }
+                    }
+
+                    document.addEventListener("click", handleOutsideClick);
                 }
-                categoriesDiv.appendChild(addCategory);
             }
-        };
 
-        const displayAnnouncementsByCategory = async (categoryName) =>{
-            let reqData = {"name":categoryName};
-            let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
-            console.log(data);
-            createAnnouncementsElements(data, "select-announcement","Przeglądaj Ogłoszenia");
+            setupAddCategory();
+            categoriesDiv.appendChild(addCategory);
         }
+    }
 
-
-        const displayAnnouncements = async (e) =>{
-            const categoryName = e.target.name;
-            let reqData = {"name":categoryName};
-            let data = await fetchAsync(reqData,"/browseAnnouncements/"+reqData.name);
-            createAnnouncementsElements(data, "select-announcement","Przeglądaj Ogłoszenia");
+    const displayAnnouncementsByCategory = async (categoryName) =>{
+        let reqData = {"name":categoryName};
+        let data = await fetchAsync(reqData, `/browseAnnouncements/${reqData.name}?userId=${userId}`);
+        console.log(data);
+        if (data.length === 0) {
+            showNoAnnouncementsMessage("select-announcement");
+            return;
+        } else {
+            createAnnouncementsElements(data, "select-announcement");
+            document.getElementById("no-announcements").style.display = 'none';
         }
+    }
 
-        const fetchAsync = async (bodyObject, url) => {
-            const options = {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(bodyObject)
-            }
-            let response = await fetch(url, options);
-            if (!response.ok) return response.status
-            else return await response.json() // response.json
+
+    const displayAnnouncements = async (e) =>{
+        const categoryName = e.target.name;
+        let reqData = {"name":categoryName};
+        let data = await fetchAsync({}, `/browseAnnouncements/${categoryName}?userId=${userId}`);
+        if (data.length === 0) {
+            showNoAnnouncementsMessage("select-announcement");
+            return;
+        } else {
+            createAnnouncementsElements(data, "select-announcement");
+            document.getElementById("no-announcements").style.display = 'none';
         }
-        loadUsers();
-    </script>
+    }
+
+    const showNoAnnouncementsMessage = (containerId) => {
+        const noAnnouncementsMessage = document.createElement('div');
+        noAnnouncementsMessage.id = 'no-announcements-message';
+        noAnnouncementsMessage.innerHTML = "Brak ogłoszeń!";
+
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.innerHTML = '';
+
+            container.appendChild(noAnnouncementsMessage);
+            container.style.display = 'flex';
+        }
+    }
+
+    const fetchAsync = async (bodyObject, url) => {
+        const options = {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(bodyObject)
+        }
+        let response = await fetch(url, options);
+        if (!response.ok) return response.status
+        else return await response.json() // response.json
+    }
+
+    loadUsers();
+</script>
 </body>
 </html>

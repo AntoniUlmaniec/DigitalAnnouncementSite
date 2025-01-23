@@ -3,6 +3,7 @@ import java.util.*;
 public class DataBase {
     private HashMap<Category, List<Announcement>> announcementsInCategories;
     private List<User> users;
+    private List<User> bannedUsers;
     private HashMap<User, List<Announcement>> wishList;
     private List<Category> categories;
     private Statistics statistics;
@@ -75,7 +76,8 @@ public class DataBase {
         users = new ArrayList<>();
         wishList = new HashMap<>();
         categories = new ArrayList<>();
-        statistics = new Statistics(0,0,0);
+        bannedUsers = new ArrayList<>();
+        statistics = new Statistics(0, 0, 0);
 
         users.add(new User("Olaf", userId++));
         users.add(new User("Piotr", userId++));
@@ -99,7 +101,7 @@ public class DataBase {
 
             announcementsInCategories.put(cat, announcements);
         }
-}
+    }
 
     public List<Announcement> getAnnouncements() {
         List<Announcement> allAnnouncements = new ArrayList<>();
@@ -126,5 +128,11 @@ public class DataBase {
         return statistics;
     }
 
-    public HashMap<User, List<Announcement>> getWishList() { return wishList; }
+    public List<User> getBannedUsers() {
+        return bannedUsers;
+    }
+
+    public HashMap<User, List<Announcement>> getWishList() {
+        return wishList;
+    }
 }

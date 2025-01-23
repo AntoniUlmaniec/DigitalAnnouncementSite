@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+
 public class User {
     private int numberOfAnnouncements;
     private List<Announcement> wishList;
@@ -97,6 +98,7 @@ public class User {
     public boolean isBanStatus() {
         return banStatus;
     }
+
     public void setBanStatus(boolean banStatus) {
         this.banStatus = banStatus;
     }
