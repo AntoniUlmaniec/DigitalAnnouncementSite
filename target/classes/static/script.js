@@ -44,7 +44,6 @@ const login = async (e) => {
         return; //nie można się zalogować na zbanowanego usera
     }
 
-
     let id = e.target.userId;
 
     let reqData = {
@@ -64,9 +63,6 @@ const login = async (e) => {
         document.getElementById("navigation-container").style.display = "block";
         document.getElementById("select-category").style.display = "flex";
 
-        document.getElementById("edit-announcement").innerHTML = '';
-        document.getElementById("create-announcement").innerHTML = '';
-
         if (isAdmin) {
             document.getElementById("navigation-container").style.width = "60%";
             document.getElementById("stats-button").style.display = "inline-block";
@@ -82,17 +78,11 @@ const login = async (e) => {
 }
 
 const showBannedUsers = async () => {
-    document.getElementById("my-announcements").style.display = "none";
-    document.getElementById("select-category").style.display = "none";
-    document.getElementById("wishlist").style.display = "none";
-    document.getElementById("create-announcement").style.display = "none";
-    document.getElementById("no-announcements").style.display = 'none';
-    document.getElementById("select-announcement").innerHTML = '';
+    setView("display-stats");
 
     const container = document.getElementById("display-stats");
     container.innerHTML = '';
     container.style.visibility = 'visible';
-    container.style.display = 'flex';
     container.style.flexDirection = 'column';
 
     const bannedUsers = await fetchAsync({}, "/fetchBannedUsers");
@@ -136,17 +126,11 @@ const showBannedUsers = async () => {
 
 
 const showStats = async () => {
-    document.getElementById("my-announcements").style.display = "none";
-    document.getElementById("select-category").style.display = "none";
-    document.getElementById("wishlist").style.display = "none";
-    document.getElementById("create-announcement").style.display = "none";
-    document.getElementById("no-announcements").style.display = 'none';
-    document.getElementById("select-announcement").innerHTML = '';
+    setView("display-stats");
 
     const container = document.getElementById("display-stats");
     container.innerHTML = '';
     container.style.visibility = 'visible';
-    container.style.display = "flex";
     container.style.flexDirection = "column";
 
     const statsData = await fetchAsync({}, "/viewGeneralStatistics");
@@ -201,38 +185,19 @@ const showStats = async () => {
 
 const showMyAnnouncements = async () => {
     currentView = "myAnnouncements";
-    document.getElementById("my-announcements").style.display = "flex";
-    document.getElementById("select-category").style.display = "none";
-    document.getElementById("wishlist").style.display = "none";
-    document.getElementById("create-announcement").style.display = "none";
-    document.getElementById("display-stats").style.display = "none";
-    document.getElementById("no-announcements").style.display = 'none';
-    document.getElementById("select-announcement").innerHTML = '';
+    setView("my-announcements");
     await displayMyAnnouncements();
 }
 
 const showCategories = async () => {
     currentView = "category";
-    document.getElementById("select-category").style.display = "flex";
-    document.getElementById("create-announcement").style.display = "none";
-    document.getElementById("wishlist").style.display = "none";
-    document.getElementById("my-announcements").style.display = "none";
-    document.getElementById("display-stats").style.display = "none";
-    document.getElementById("no-announcements").style.display = 'none';
-    document.getElementById("select-announcement").innerHTML = '';
-
+    setView("select-category");
     await displayCategories();
 }
 
 const showMyWishList = async () => {
     currentView = "wishlist";
-    document.getElementById("wishlist").style.display = "flex";
-    document.getElementById("select-category").style.display = "none";
-    document.getElementById("create-announcement").style.display = "none";
-    document.getElementById("my-announcements").style.display = "none";
-    document.getElementById("display-stats").style.display = "none";
-    document.getElementById("no-announcements").style.display = 'none';
-    document.getElementById("select-announcement").innerHTML = '';
+    setView("wishlist");
 
     let data = await fetchAsync({}, `/fetchWishlist/${userId}`);
 
@@ -251,12 +216,7 @@ const goToHome = () => {
     document.getElementById("select-user").style.display = "block";
     document.getElementById("digital-board-header").style.display = "block";
     document.getElementById("navigation-container").style.display = "none";
-    document.getElementById("my-announcements").style.display = "none";
-    document.getElementById("select-category").style.display = "none";
-    document.getElementById("wishlist").style.display = "none";
-    document.getElementById("create-announcement").style.display = "none";
-    document.getElementById("display-stats").style.display = "none";
-    document.getElementById("no-announcements").style.display = 'none';
+    setView();
 
     user = "";
     userId = "";
@@ -316,15 +276,13 @@ const createAnnouncementsElements = (data, containerId, initialHTML) => {
                 console.log(commentInput.value);
                 let data = await fetchAsync({ state: user + ":" + commentInput.value }, "/commentOnAnnouncement/" + e.id);
                 if (data != null) {
+                    showConfirmation("Komentarz został wysłany!", true);
                     if (currentView === "category") {
                         await displayAnnouncementsByCategory(e.category.name);
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
                     } else if (currentView === "myAnnouncements") {
                         await displayMyAnnouncements();
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
                     } else if (currentView === "wishlist") {
                         await showMyWishList();
-                        showConfirmation("Pomyślnie dodano komentarz!", true);
                     }
                 }
             }
@@ -355,7 +313,14 @@ const createAnnouncementsElements = (data, containerId, initialHTML) => {
 
             if (currentView === "wishlist") {
                 let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
-                createAnnouncementsElements(wishlistData, "wishlist");
+                if (wishlistData.length === 0) {
+                    document.getElementById("wishlist").innerHTML = '';
+                    showNoAnnouncementsMessage("no-announcements");
+                    showConfirmation("Brak dodanych ogłoszeń!", false);
+                } else {
+                    createAnnouncementsElements(wishlistData, "wishlist");
+                    document.getElementById("no-announcements").style.display = 'none';
+                }
             }
         }
 
@@ -959,6 +924,32 @@ const showNoAnnouncementsMessage = (containerId) => {
 
         container.appendChild(noAnnouncementsMessage);
         container.style.display = 'flex';
+    }
+}
+
+const setView = (viewId) => {
+    const sections = [
+        "my-announcements",
+        "select-category",
+        "wishlist",
+        "create-announcement",
+        "display-stats",
+        "no-announcements",
+    ];
+    document.getElementById("select-announcement").innerHTML = '';
+
+    sections.forEach(sectionId => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.style.display = "none";
+        }
+    });
+
+    if (viewId) {
+        const activeElement = document.getElementById(viewId);
+        if (activeElement) {
+            activeElement.style.display = "flex";
+        }
     }
 }
 
