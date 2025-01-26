@@ -1,0 +1,30 @@
+@startuml
+actor User
+actor Admin
+
+usecase "Publikowanie ogłoszenia" as UC1
+usecase "Usuwanie/Edytowanie własnego ogłoszenia" as UC2
+usecase "Przeglądanie kategorii i ogłoszeń" as UC3
+usecase "Dodanie ogłoszenia do wishlist" as UC4
+usecase "Komentowanie ogłoszenia" as UC5
+
+usecase "Usuwanie/Edytowanie dowolnego ogłoszenia" as UC6
+usecase "Dodawanie/Usuwanie kategorii" as UC7
+usecase "Banowanie/Unbanowanie użytkowników" as UC8
+usecase "Przeglądanie statystyk systemowych" as UC9
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+
+User --> Admin
+
+Admin --> UC6
+Admin --> UC7
+Admin --> UC8
+Admin --> UC9
+
+
+@enduml

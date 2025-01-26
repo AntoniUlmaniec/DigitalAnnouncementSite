@@ -1,0 +1,85 @@
+@startuml
+actor "User" as U
+actor "Admin" as A
+participant "System" as S
+participant "Database" as DB
+
+== User Actions ==
+U -> S: login(userId)
+S -> DB: findUserById(userId)
+DB --> S: User/Admin details
+S --> U: success/failure
+
+U -> S: browseCategories()
+S -> DB: fetchCategories()
+DB --> S: categoriesList
+S --> U: displayCategories
+
+U -> S: browseAnnouncements(categoryName)
+S -> DB: fetchAnnouncements(categoryId)
+DB --> S: announcementsList
+S --> U: displayAnnouncements
+
+U -> S: publishAnnouncement(title, content, category)
+S -> DB: saveAnnouncement(announcement)
+DB --> S: success
+S --> U: confirmation
+
+U -> S: editAnnouncement(announcementId, updatedData)
+S -> DB: findAnnouncementByOwner(userId, announcementId)
+DB --> S: announcementDetails
+S -> DB: updateAnnouncement(announcementId, updatedData)
+DB --> S: success
+S --> U: confirmation
+
+U -> S: deleteAnnouncement(announcementId)
+S -> DB: findAnnouncementByOwner(userId, announcementId)
+DB --> S: announcementDetails
+S -> DB: deleteAnnouncement(announcementId)
+DB --> S: success
+S --> U: confirmation
+
+U -> S: addToWishlist(announcementId)
+S -> DB: updateWishlist(userId, announcementId)
+DB --> S: success
+S --> U: confirmation
+
+U -> S: commentOnAnnouncement(announcementId, comment)
+S -> DB: addComment(announcementId, userId, comment)
+DB --> S: success
+S --> U: confirmation
+
+== Admin Actions ==
+A -> S: banUser(userId)
+S -> DB: findUserById(userId)
+DB --> S: userDetails
+S -> DB: updateUserStatus(userId, "banned")
+DB --> S: success
+S --> A: confirmation
+
+A -> S: unbanUser(userId)
+S -> DB: findUserById(userId)
+DB --> S: userDetails
+S -> DB: updateUserStatus(userId, "active")
+DB --> S: success
+S --> A: confirmation
+
+A -> S: addCategory(categoryData)
+S -> DB: saveCategory(categoryData)
+DB --> S: success
+S --> A: confirmation
+
+A -> S: removeCategory(categoryId)
+S -> DB: deleteCategory(categoryId)
+DB --> S: success
+S --> A: confirmation
+
+A -> S: viewGeneralStatistics()
+S -> DB: fetchStatistics()
+DB --> S: statisticsData
+S --> A: displayStatistics
+
+== System Flow ==
+S -> DB: initializeDatabase()
+DB --> S: success
+@enduml

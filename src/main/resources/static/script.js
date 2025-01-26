@@ -77,141 +77,6 @@ const login = async (e) => {
     }
 }
 
-const showBannedUsers = async () => {
-    setView("display-stats");
-
-    const container = document.getElementById("display-stats");
-    container.innerHTML = '';
-    container.style.visibility = 'visible';
-    container.style.flexDirection = 'column';
-
-    const bannedUsers = await fetchAsync({}, "/fetchBannedUsers");
-
-    if (bannedUsers.length === 0) {
-        const message = document.createElement("div");
-        message.innerText = "Brak zbanowanych użytkowników.";
-        message.style.textAlign = "center";
-        message.style.color = "#555";
-        container.appendChild(message);
-        showConfirmation("Brak zbanowanych użytkowników!", false);
-        return;
-    }
-
-    bannedUsers.forEach(user => {
-        const userDiv = document.createElement("div");
-        userDiv.classList.add("user-div");
-
-        const userInfo = document.createElement("div");
-        userInfo.classList.add("user-info");
-        userInfo.innerText = `Użytkownik: ${user.username}`;
-
-        const unbanButton = document.createElement("button");
-        unbanButton.classList.add("unban-button");
-        unbanButton.innerText = "Odbanuj";
-
-        unbanButton.onclick = async () => {
-            const response = await fetchAsync({ id: user.id }, "/unbanUser");
-            if (response.state === "success") {
-                showConfirmation(`Użytkownik ${user.username} został odbanowany!`, true);
-                await loadUsers();
-                await showBannedUsers();
-            }
-        }
-
-        userDiv.appendChild(userInfo);
-        userDiv.appendChild(unbanButton);
-        container.appendChild(userDiv);
-    });
-}
-
-
-const showStats = async () => {
-    setView("display-stats");
-
-    const container = document.getElementById("display-stats");
-    container.innerHTML = '';
-    container.style.visibility = 'visible';
-    container.style.flexDirection = "column";
-
-    const statsData = await fetchAsync({}, "/viewGeneralStatistics");
-
-    const header = document.createElement("h2");
-    header.innerText = "Statystyki Systemu";
-    header.style.textAlign = "center";
-    header.style.color = "white";
-    header.style.backgroundColor = "#00274d";
-    header.style.padding = "15px";
-    header.style.borderRadius = "10px";
-    header.style.margin = "0 auto 20px auto";
-    header.style.display = "inline-block";
-    container.appendChild(header);
-
-    const table = document.createElement("table");
-    table.style.width = "100%";
-    table.style.maxWidth = "600px";
-    table.style.margin = "0 auto";
-    table.style.borderCollapse = "collapse";
-    table.style.backgroundColor = "#00274d";
-    table.style.color = "white";
-    table.style.borderRadius = "10px";
-    table.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
-
-    const thead = document.createElement("thead");
-    thead.innerHTML = `
-            <tr style="font-size: 18px;">
-                <th style="padding: 10px; border: 1px solid white;">Kategoria</th>
-                <th style="padding: 10px; border: 1px solid white;">Wartość</th>
-            </tr>`;
-    table.appendChild(thead);
-
-    const tbody = document.createElement("tbody");
-    tbody.innerHTML = `
-            <tr>
-                <td style="padding: 10px; border: 1px solid white;">Liczba użytkowników</td>
-                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.totalUsers}</td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; border: 1px solid white;">Liczba zbanowanych użytkowników</td>
-                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.bannedUsers}</td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; border: 1px solid white;">Liczba ogłoszeń</td>
-                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.totalAnnouncements}</td>
-            </tr>`;
-    table.appendChild(tbody);
-
-    container.appendChild(table);
-}
-
-const showMyAnnouncements = async () => {
-    currentView = "myAnnouncements";
-    setView("my-announcements");
-    await displayMyAnnouncements();
-}
-
-const showCategories = async () => {
-    currentView = "category";
-    setView("select-category");
-    await displayCategories();
-}
-
-const showMyWishList = async () => {
-    currentView = "wishlist";
-    setView("wishlist");
-
-    let data = await fetchAsync({}, `/fetchWishlist/${userId}`);
-
-    if (data.length === 0) {
-        showConfirmation("Brak ulubionych ogłoszeń!", false);
-        showNoAnnouncementsMessage('no-announcements');
-        document.getElementById("wishlist").innerHTML = '';
-        return;
-    } else {
-        createAnnouncementsElements(data, "wishlist");
-        document.getElementById("no-announcements").style.display = 'none';
-    }
-}
-
 const goToHome = () => {
     document.getElementById("select-user").style.display = "block";
     document.getElementById("digital-board-header").style.display = "block";
@@ -221,8 +86,6 @@ const goToHome = () => {
     user = "";
     userId = "";
     isAdmin = false;
-
-    document.getElementById("select-announcement").innerHTML = '';
 }
 
 
@@ -253,7 +116,7 @@ const createAnnouncementsElements = (data, containerId, initialHTML) => {
         category.classList.add("category");
 
         const comments = document.createElement("div");
-        comments.innerHTML = "Comments:<br>" + e.comments.map(c => `- ${c}`).join("<br>");
+        comments.innerHTML = "Komentarze:<br>" + e.comments.map(c => `-${c}`).join("<br>");
         comments.classList.add("comments");
 
         announcementsDiv.appendChild(div);
@@ -274,16 +137,10 @@ const createAnnouncementsElements = (data, containerId, initialHTML) => {
                 return;
             } else {
                 console.log(commentInput.value);
-                let data = await fetchAsync({ state: user + ":" + commentInput.value }, "/commentOnAnnouncement/" + e.id);
+                let data = await fetchAsync({ state: user + ": " + commentInput.value }, "/commentOnAnnouncement/" + e.id);
                 if (data != null) {
                     showConfirmation("Komentarz został wysłany!", true);
-                    if (currentView === "category") {
-                        await displayAnnouncementsByCategory(e.category.name);
-                    } else if (currentView === "myAnnouncements") {
-                        await displayMyAnnouncements();
-                    } else if (currentView === "wishlist") {
-                        await showMyWishList();
-                    }
+                    refreshView(e.category.name);
                 }
             }
         }
@@ -327,245 +184,228 @@ const createAnnouncementsElements = (data, containerId, initialHTML) => {
         div.append(title, content, owner, category, comments, commentDiv, heart);
 
         if (isAdmin && e.owner.username !== user) {
-            // Przycisk usuń
-            const deleteButton = document.createElement("div");
-            deleteButton.classList.add("button", "delete");
-            deleteButton.innerText = "Usuń";
-            deleteButton.onclick = async () => {
-                event.stopPropagation();
-
-                const modal = document.getElementById("delete-confirm-modal");
-                const overlay = document.getElementById("delete-modal-overlay");
-                modal.classList.add("show");
-                overlay.classList.add("show");
-
-                const modalText = modal.querySelector("p");
-                modalText.innerText = "Czy na pewno chcesz usunąć to ogłoszenie?";
-
-                const confirmButton = document.getElementById("confirm-delete-wishlist");
-                const cancelButton = document.getElementById("cancel-delete-wishlist");
-                confirmButton.innerText = "Usuń";
-
-                confirmButton.onclick = async () => {
-                    modal.classList.remove("show");
-                    overlay.classList.remove("show");
-
-                    let data = await fetchAsync({}, "/deleteAnnouncement/" + e.id);
-                    if (data.state === "success") {
-                        showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
-                        if (currentView === "category") {
-                            await displayAnnouncementsByCategory(e.category.name);
-                        } else if (currentView === "myAnnouncements") {
-                            await displayMyAnnouncements();
-                        } else if (currentView === "wishlist") {
-                            let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
-                            createAnnouncementsElements(wishlistData, "wishlist");
-                        }
-                    }
-                }
-
-                cancelButton.onclick = () => {
-                    modal.classList.remove("show");
-                    overlay.classList.remove("show");
-                    showConfirmation("Anulowano usuwanie ogłoszenia!", false);
-                }
-            }
-
-            // Przycisk edytuj
-            const editButton = document.createElement("div");
-            editButton.classList.add("button");
-            editButton.innerText = "Edytuj";
-            editButton.onclick = async () => {
-                let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
-
-                document.getElementById('edit-title').value = announcementData.title;
-                document.getElementById('edit-content').value = announcementData.content;
-
-                if (!document.getElementById('modal-overlay').classList.contains('show')) {
-                    document.getElementById('modal-overlay').classList.add('show');
-                    document.getElementById('edit-modal').classList.add('show');
-                }
-
-                document.getElementById('save-changes').onclick = async () => {
-                    const updatedData = {
-                        id: announcementData.id,
-                        title: document.getElementById('edit-title').value,
-                        content: document.getElementById('edit-content').value
-                    }
-
-                    const response = await fetchAsync(updatedData, "/editAnnouncement");
-                    if (response.state === "success") {
-                        document.getElementById('modal-overlay').classList.remove('show');
-                        document.getElementById('edit-modal').classList.remove('show');
-                        showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
-                        if (currentView === "category") {
-                            await displayAnnouncementsByCategory(e.category.name);
-                        } else if (currentView === "myAnnouncements") {
-                            await displayMyAnnouncements();
-                        } else if (currentView === "wishlist") {
-                            await showMyWishList();
-                        }
-                    }
-                }
-
-                document.getElementById('cancel-edit').onclick = () => {
-                    document.getElementById('modal-overlay').classList.remove('show');
-                    document.getElementById('edit-modal').classList.remove('show');
-                    showConfirmation("Anulowano edycję ogłoszenia!", false);
-                }
-            }
-
-            // Przycisk zbanuj
-            const banButton = document.createElement("div");
-            banButton.classList.add("button", "ban");
-            banButton.innerText = "Zbanuj";
-            banButton.onclick = async () => {
-                event.stopPropagation();
-                const username = e.owner.username;
-
-                const modal = document.getElementById("delete-confirm-modal");
-                const overlay = document.getElementById("delete-modal-overlay");
-
-                modal.classList.add("show");
-                overlay.classList.add("show");
-
-                const modalText = modal.querySelector("p");
-                modalText.innerText = `Czy na pewno chcesz zbanować użytkownika: ${username}?`;
-
-                const confirmButton = document.getElementById("confirm-delete-wishlist");
-                const cancelButton = document.getElementById("cancel-delete-wishlist");
-                confirmButton.innerText = "Zbanuj";
-
-                confirmButton.onclick = async () => {
-                    modal.classList.remove("show");
-                    overlay.classList.remove("show");
-
-                    const response = await fetchAsync({ id: e.owner.id }, "/banUser");
-
-                    if (response.state === "success") {
-                        showConfirmation(`Użytkownik ${e.owner.username} został zbanowany!`, true);
-
-                        if (currentView === "category" && lastClickedCategory) {
-                            await displayAnnouncementsByCategory(lastClickedCategory.name);
-                        } else if (currentView === "myAnnouncements") {
-                            await displayMyAnnouncements();
-                        } else if (currentView === "wishlist") {
-                            await showMyWishList();
-                        }
-
-                        await loadUsers();
-                    }
-                }
-
-                cancelButton.onclick = () => {
-                    modal.classList.remove("show");
-                    overlay.classList.remove("show");
-                    showConfirmation("Anulowano banowanie użytkownika!", false);
-                }
-            }
-
-            div.append(deleteButton, editButton, banButton);
+            createAdminButtons(e, div);
+            announcementsDiv.appendChild(div);
         }
-
-        announcementsDiv.appendChild(div);
 
         if (e.owner.username === user) {
-            const buttonsDiv = document.createElement("div");
-            buttonsDiv.classList.add("buttons-container");
-
-            const deleteAnnouncement = document.createElement("div");
-            deleteAnnouncement.onclick = () => {
-                event.stopPropagation();
-
-                const modal = document.getElementById("delete-confirm-modal");
-                const overlay = document.getElementById("delete-modal-overlay");
-                modal.classList.add("show");
-                overlay.classList.add("show");
-
-                const modalText = modal.querySelector("p");
-                modalText.innerText = "Czy na pewno chcesz usunąć to ogłoszenie?";
-
-                const confirmButton = document.getElementById("confirm-delete-wishlist");
-                const cancelButton = document.getElementById("cancel-delete-wishlist");
-                confirmButton.innerText = "Usuń";
-
-                confirmButton.onclick = async () => {
-                    modal.classList.remove("show");
-                    overlay.classList.remove("show");
-
-                    let data = await fetchAsync({}, `/deleteAnnouncement/${e.id}`);
-                    if (data.state === "success") {
-                        showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
-                        if (currentView === "category") {
-                            await displayAnnouncementsByCategory(e.category.name);
-                        } else if (currentView === "myAnnouncements") {
-                            await displayMyAnnouncements();
-                        } else if (currentView === "wishlist") {
-                            let wishlistData = await fetchAsync({}, `/fetchWishlist/${userId}`);
-                            createAnnouncementsElements(wishlistData, "wishlist");
-                        }
-                    }
-                }
-
-                cancelButton.onclick = () => {
-                    modal.classList.remove("show");
-                    overlay.classList.remove("show");
-                    showConfirmation("Anulowano usuwanie ogłoszenia!", false);
-                }
-            }
-
-            deleteAnnouncement.classList.add("button", "delete");
-            deleteAnnouncement.innerText = "usuń";
-            buttonsDiv.appendChild(deleteAnnouncement);
-
-            const editAnnouncement = document.createElement("div");
-            editAnnouncement.onclick = async () => {
-                let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
-
-                document.getElementById('edit-title').value = announcementData.title;
-                document.getElementById('edit-content').value = announcementData.content;
-
-                if (!document.getElementById('modal-overlay').classList.contains('show')) {
-                    document.getElementById('modal-overlay').classList.add('show');
-                    document.getElementById('edit-modal').classList.add('show');
-                }
-
-                document.getElementById('save-changes').onclick = async () => {
-                    const updatedData = {
-                        id: announcementData.id,
-                        title: document.getElementById('edit-title').value,
-                        content: document.getElementById('edit-content').value
-                    }
-
-                    const response = await fetchAsync(updatedData, "/editAnnouncement");
-                    if (response.state === "success") {
-                        document.getElementById('modal-overlay').classList.remove('show');
-                        document.getElementById('edit-modal').classList.remove('show');
-                        showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
-                        if (currentView === "category") {
-                            await displayAnnouncementsByCategory(e.category.name);
-                        } else if (currentView === "myAnnouncements") {
-                            await displayMyAnnouncements();
-                        } else if (currentView === "wishlist") {
-                            await showMyWishList();
-                        }
-                    }
-                }
-
-                document.getElementById('cancel-edit').onclick = () => {
-                    document.getElementById('modal-overlay').classList.remove('show');
-                    document.getElementById('edit-modal').classList.remove('show');
-                    showConfirmation("Anulowano edycje ogłoszenia!", false);
-                }
-            }
-            editAnnouncement.classList.add("button");
-            editAnnouncement.innerText = "edytuj";
-            buttonsDiv.appendChild(editAnnouncement);
-
-
-            div.appendChild(buttonsDiv);
+            createUserButtons(e, div);
         }
     });
+}
+
+const refreshView = async (categoryName) => {
+    if (currentView === "category") {
+        await displayAnnouncementsByCategory(categoryName);
+    } else if (currentView === "myAnnouncements") {
+        await displayMyAnnouncements();
+    } else if (currentView === "wishlist") {
+        await showMyWishList();
+    }
+}
+
+const createAdminButtons = (e, div) => {
+    // Przycisk usuń
+    const deleteButton = document.createElement("div");
+    deleteButton.classList.add("button", "delete");
+    deleteButton.innerText = "Usuń";
+    deleteButton.onclick = async () => {
+        event.stopPropagation();
+
+        const modal = document.getElementById("delete-confirm-modal");
+        const overlay = document.getElementById("delete-modal-overlay");
+        modal.classList.add("show");
+        overlay.classList.add("show");
+
+        const modalText = modal.querySelector("p");
+        modalText.innerText = "Czy na pewno chcesz usunąć to ogłoszenie?";
+
+        const confirmButton = document.getElementById("confirm-delete-wishlist");
+        const cancelButton = document.getElementById("cancel-delete-wishlist");
+        confirmButton.innerText = "Usuń";
+
+        confirmButton.onclick = async () => {
+            modal.classList.remove("show");
+            overlay.classList.remove("show");
+
+            let data = await fetchAsync({}, "/deleteAnnouncement/" + e.id);
+            if (data.state === "success") {
+                showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                refreshView(e.category.name);
+            }
+        }
+
+        cancelButton.onclick = () => {
+            modal.classList.remove("show");
+            overlay.classList.remove("show");
+            showConfirmation("Anulowano usuwanie ogłoszenia!", false);
+        }
+    }
+
+    // Przycisk edytuj
+    const editButton = document.createElement("div");
+    editButton.classList.add("button");
+    editButton.innerText = "Edytuj";
+    editButton.onclick = async () => {
+        let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
+
+        document.getElementById('edit-title').value = announcementData.title;
+        document.getElementById('edit-content').value = announcementData.content;
+
+        if (!document.getElementById('modal-overlay').classList.contains('show')) {
+            document.getElementById('modal-overlay').classList.add('show');
+            document.getElementById('edit-modal').classList.add('show');
+        }
+
+        document.getElementById('save-changes').onclick = async () => {
+            const updatedData = {
+                id: announcementData.id,
+                title: document.getElementById('edit-title').value,
+                content: document.getElementById('edit-content').value
+            }
+
+            const response = await fetchAsync(updatedData, "/editAnnouncement");
+            if (response.state === "success") {
+                document.getElementById('modal-overlay').classList.remove('show');
+                document.getElementById('edit-modal').classList.remove('show');
+                showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                refreshView(e.category.name);
+            }
+        }
+
+        document.getElementById('cancel-edit').onclick = () => {
+            document.getElementById('modal-overlay').classList.remove('show');
+            document.getElementById('edit-modal').classList.remove('show');
+            showConfirmation("Anulowano edycję ogłoszenia!", false);
+        }
+    }
+
+    // Przycisk zbanuj
+    const banButton = document.createElement("div");
+    banButton.classList.add("button", "ban");
+    banButton.innerText = "Zbanuj";
+    banButton.onclick = async () => {
+        event.stopPropagation();
+        const username = e.owner.username;
+
+        const modal = document.getElementById("delete-confirm-modal");
+        const overlay = document.getElementById("delete-modal-overlay");
+
+        modal.classList.add("show");
+        overlay.classList.add("show");
+
+        const modalText = modal.querySelector("p");
+        modalText.innerText = `Czy na pewno chcesz zbanować użytkownika: ${username}?`;
+
+        const confirmButton = document.getElementById("confirm-delete-wishlist");
+        const cancelButton = document.getElementById("cancel-delete-wishlist");
+        confirmButton.innerText = "Zbanuj";
+
+        confirmButton.onclick = async () => {
+            modal.classList.remove("show");
+            overlay.classList.remove("show");
+
+            const response = await fetchAsync({ id: e.owner.id }, "/banUser");
+
+            if (response.state === "success") {
+                showConfirmation(`Użytkownik ${e.owner.username} został zbanowany!`, true);
+                refreshView(lastClickedCategory.name);
+                await loadUsers();
+            }
+        }
+
+        cancelButton.onclick = () => {
+            modal.classList.remove("show");
+            overlay.classList.remove("show");
+            showConfirmation("Anulowano banowanie użytkownika!", false);
+        }
+    }
+
+    div.append(deleteButton, editButton, banButton);
+}
+
+const createUserButtons = async (e, div) => {
+    const buttonsDiv = document.createElement("div");
+    buttonsDiv.classList.add("buttons-container");
+
+    //przycisk usuń
+    const deleteAnnouncement = document.createElement("div");
+    deleteAnnouncement.classList.add("button", "delete");
+    deleteAnnouncement.innerText = "usuń";
+    deleteAnnouncement.onclick = () => {
+        event.stopPropagation();
+
+        const modal = document.getElementById("delete-confirm-modal");
+        const overlay = document.getElementById("delete-modal-overlay");
+        modal.classList.add("show");
+        overlay.classList.add("show");
+
+        const modalText = modal.querySelector("p");
+        modalText.innerText = "Czy na pewno chcesz usunąć to ogłoszenie?";
+
+        const confirmButton = document.getElementById("confirm-delete-wishlist");
+        const cancelButton = document.getElementById("cancel-delete-wishlist");
+        confirmButton.innerText = "Usuń";
+
+        confirmButton.onclick = async () => {
+            modal.classList.remove("show");
+            overlay.classList.remove("show");
+
+            let data = await fetchAsync({}, `/deleteAnnouncement/${e.id}`);
+            if (data.state === "success") {
+                showConfirmation("Pomyślnie usunięto ogłoszenie!", true);
+                refreshView(e.category.name);
+            }
+        }
+
+        cancelButton.onclick = () => {
+            modal.classList.remove("show");
+            overlay.classList.remove("show");
+            showConfirmation("Anulowano usuwanie ogłoszenia!", false);
+        }
+    }
+    buttonsDiv.appendChild(deleteAnnouncement);
+
+    //przycisk edytuj
+    const editAnnouncement = document.createElement("div");
+    editAnnouncement.classList.add("button");
+    editAnnouncement.innerText = "edytuj";
+    editAnnouncement.onclick = async () => {
+        let announcementData = await fetchAsync({}, `/getAnnouncement/${e.id}`);
+
+        document.getElementById('edit-title').value = announcementData.title;
+        document.getElementById('edit-content').value = announcementData.content;
+
+        if (!document.getElementById('modal-overlay').classList.contains('show')) {
+            document.getElementById('modal-overlay').classList.add('show');
+            document.getElementById('edit-modal').classList.add('show');
+        }
+
+        document.getElementById('save-changes').onclick = async () => {
+            const updatedData = {
+                id: announcementData.id,
+                title: document.getElementById('edit-title').value,
+                content: document.getElementById('edit-content').value
+            }
+
+            const response = await fetchAsync(updatedData, "/editAnnouncement");
+            if (response.state === "success") {
+                document.getElementById('modal-overlay').classList.remove('show');
+                document.getElementById('edit-modal').classList.remove('show');
+                showConfirmation("Pomyślnie zedytowano ogłoszenie!", true);
+                refreshView(e.category.name);
+            }
+        }
+
+        document.getElementById('cancel-edit').onclick = () => {
+            document.getElementById('modal-overlay').classList.remove('show');
+            document.getElementById('edit-modal').classList.remove('show');
+            showConfirmation("Anulowano edycje ogłoszenia!", false);
+        }
+    }
+    buttonsDiv.appendChild(editAnnouncement);
+
+    div.appendChild(buttonsDiv);
 }
 
 const banUser = async (id) => {
@@ -609,17 +449,11 @@ const displayMyAnnouncements = async () => {
 }
 
 const createNewAnnouncement = async ()=> {
+    setView("create-announcement");
     let announcementsDiv = document.getElementById("create-announcement");
     announcementsDiv.innerHTML = "";
-
     announcementsDiv.style.visibility = "visible";
     announcementsDiv.style.display = "block";
-    document.getElementById("my-announcements").style.display = "none";
-    document.getElementById("select-category").style.display = "none";
-    document.getElementById("wishlist").style.display = "none";
-    document.getElementById("display-stats").style.display = "none";
-    document.getElementById("no-announcements").style.display = 'none';
-    document.getElementById("select-announcement").innerHTML = '';
 
     let titleDiv = document.createElement("div");
     titleDiv.classList.add("create-announcement-title");
@@ -759,7 +593,7 @@ const displayCategories = async () => {
         }
 
         elem.onmouseout = (e) => {
-            if (e.target === elem) { // Sprawdza, czy zdarzenie pochodzi bezpośrednio z elementu kategorii
+            if (e.target === elem) {
                 if (e.target !== lastClickedCategory || lastClickedCategory === null) {
                     e.target.style.background = "#f5f5f5";
                 }
@@ -950,6 +784,141 @@ const setView = (viewId) => {
         if (activeElement) {
             activeElement.style.display = "flex";
         }
+    }
+}
+
+const showBannedUsers = async () => {
+    setView("display-stats");
+
+    const container = document.getElementById("display-stats");
+    container.innerHTML = '';
+    container.style.visibility = 'visible';
+    container.style.flexDirection = 'column';
+
+    const bannedUsers = await fetchAsync({}, "/fetchBannedUsers");
+
+    if (bannedUsers.length === 0) {
+        const message = document.createElement("div");
+        message.innerText = "Brak zbanowanych użytkowników.";
+        message.style.textAlign = "center";
+        message.style.color = "#555";
+        container.appendChild(message);
+        showConfirmation("Brak zbanowanych użytkowników!", false);
+        return;
+    }
+
+    bannedUsers.forEach(user => {
+        const userDiv = document.createElement("div");
+        userDiv.classList.add("user-div");
+
+        const userInfo = document.createElement("div");
+        userInfo.classList.add("user-info");
+        userInfo.innerText = `Użytkownik: ${user.username}`;
+
+        const unbanButton = document.createElement("button");
+        unbanButton.classList.add("unban-button");
+        unbanButton.innerText = "Odbanuj";
+
+        unbanButton.onclick = async () => {
+            const response = await fetchAsync({ id: user.id }, "/unbanUser");
+            if (response.state === "success") {
+                showConfirmation(`Użytkownik ${user.username} został odbanowany!`, true);
+                await loadUsers();
+                await showBannedUsers();
+            }
+        }
+
+        userDiv.appendChild(userInfo);
+        userDiv.appendChild(unbanButton);
+        container.appendChild(userDiv);
+    });
+}
+
+
+const showStats = async () => {
+    setView("display-stats");
+
+    const container = document.getElementById("display-stats");
+    container.innerHTML = '';
+    container.style.visibility = 'visible';
+    container.style.flexDirection = "column";
+
+    const statsData = await fetchAsync({}, "/viewGeneralStatistics");
+
+    const header = document.createElement("h2");
+    header.innerText = "Statystyki Systemu";
+    header.style.textAlign = "center";
+    header.style.color = "white";
+    header.style.backgroundColor = "#00274d";
+    header.style.padding = "15px";
+    header.style.borderRadius = "10px";
+    header.style.margin = "0 auto 20px auto";
+    header.style.display = "inline-block";
+    container.appendChild(header);
+
+    const table = document.createElement("table");
+    table.style.width = "100%";
+    table.style.maxWidth = "600px";
+    table.style.margin = "0 auto";
+    table.style.borderCollapse = "collapse";
+    table.style.backgroundColor = "#00274d";
+    table.style.color = "white";
+    table.style.borderRadius = "10px";
+    table.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+
+    const thead = document.createElement("thead");
+    thead.innerHTML = `
+            <tr style="font-size: 18px;">
+                <th style="padding: 10px; border: 1px solid white;">Kategoria</th>
+                <th style="padding: 10px; border: 1px solid white;">Wartość</th>
+            </tr>`;
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    tbody.innerHTML = `
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba użytkowników</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.totalUsers}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba zbanowanych użytkowników</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.bannedUsers}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid white;">Liczba ogłoszeń</td>
+                <td style="padding: 10px; border: 1px solid white; text-align: center;">${statsData.totalAnnouncements}</td>
+            </tr>`;
+    table.appendChild(tbody);
+
+    container.appendChild(table);
+}
+
+const showMyAnnouncements = async () => {
+    currentView = "myAnnouncements";
+    setView("my-announcements");
+    await displayMyAnnouncements();
+}
+
+const showCategories = async () => {
+    currentView = "category";
+    setView("select-category");
+    await displayCategories();
+}
+
+const showMyWishList = async () => {
+    currentView = "wishlist";
+    setView("wishlist");
+
+    let data = await fetchAsync({}, `/fetchWishlist/${userId}`);
+
+    if (data.length === 0) {
+        showConfirmation("Brak ulubionych ogłoszeń!", false);
+        showNoAnnouncementsMessage('no-announcements');
+        document.getElementById("wishlist").innerHTML = '';
+        return;
+    } else {
+        createAnnouncementsElements(data, "wishlist");
+        document.getElementById("no-announcements").style.display = 'none';
     }
 }
 

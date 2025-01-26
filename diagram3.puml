@@ -1,0 +1,86 @@
+@startuml
+
+class User {
+    - numberOfAnnouncements : int
+    - wishList : List<Announcement>
+    - username : String
+    - id : int
+    - banStatus : boolean
+}
+
+class Admin {
+    + addCategory(category : Category) : void
+    + removeCategory(categoryId : int) : void
+    + banUser(user : User) : void
+    + viewGeneralStatistics() : Statistics
+}
+
+Admin --|> User
+
+class Announcement {
+    - id : int
+    - title : String
+    - content : String
+    - owner : User
+    - category : Category
+    - comments : List<String>
+    - isFavorite : boolean
+}
+
+class Category {
+    - id : int
+    - name : String
+    - description : String
+}
+
+class Statistics {
+    - totalUsers : int
+    - totalAnnouncements : int
+    - bannedUsers : int
+}
+
+class DataBase {
+    - announcementsInCategories : Map<Category, List<Announcement>>
+    - users : List<User>
+    - bannedUsers : List<User>
+    - wishList : Map<User, List<Announcement>>
+    - categories : List<Category>
+    - statistics : Statistics
+}
+
+class Controller {
+    - db : DataBase
+    + loadUsers(req : Request, res : Response) : String
+    + login(req : Request, res : Response) : String
+    + displayUserAnnouncements(req : Request, res : Response) : String
+    + publishAnnouncement(req : Request, res : Response) : String
+    + editAnnouncement(req : Request, res : Response) : String
+    + getAnnouncement(req : Request, res : Response) : String
+    + deleteAnnouncement(req : Request, res : Response) : String
+    + browseCategories(req : Request, res : Response) : String
+    + browseAnnouncements(req : Request, res : Response) : String
+    + addToWishlist(req : Request, res : Response) : String
+    + commentOnAnnouncement(req : Request, res : Response) : String
+    + addCategory(req : Request, res : Response) : String
+    + removeCategory(req : Request, res : Response) : String
+    + banUser(req : Request, res : Response) : String
+    + viewGeneralStatistics(req : Request, res : Response) : String
+    + fetchWishlist(req : Request, res : Response) : String
+    + fetchBannedUsers(req : Request, res : Response) : String
+    + unbanUser(req : Request, res : Response) : String
+}
+
+User --> Announcement : browses/publishes/comments on
+User --> Category : browses
+User --> Announcement : adds to wishlist/edits/removes
+Admin --> Category : manages
+Admin --> User : bans
+Admin --> Announcement : manages
+Admin --> Statistics : browses
+DataBase --> Category : stores
+DataBase --> Announcement : stores
+DataBase --> User : stores
+DataBase --> Statistics : manages
+Controller --> DataBase : interacts
+
+@enduml

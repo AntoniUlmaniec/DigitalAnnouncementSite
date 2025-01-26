@@ -572,3 +572,27 @@ input[type="text"], textarea {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+#navigation-container button {
+    background-color: #2fb1ed;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+#navigation-container button:hover {
+    background-color: #3097c7;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+#navigation-container button:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15);
+}
+
