@@ -2,7 +2,8 @@
 Cyfrowa tablica ogłoszeń - projekt na zaliczenie przedmiotu Języki Programowania Wysokiego Poziomu
 
 1.Zmiana struktury aplikacji
->Pliki .java znajdują się teraz w katalogu src/main/java, a pliki statyczne (np. strona) w katalogu /src/main/resources
+>Pliki .java znajdują się teraz w katalogu src/main/java, a pliki statyczne (np. strona) w katalogu /src/main/resources.
+>
 >Plik pom.xml, zawiera informacje, jakich frameworków/bibliotek używa aplikacja (w tym przypadku serwer Spark i Gson) 
 
 2.Uruchamianie serwera 
